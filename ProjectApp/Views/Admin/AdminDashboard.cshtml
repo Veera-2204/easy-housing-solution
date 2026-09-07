@@ -1,0 +1,28 @@
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="admin-page">
+    <div class="admin-container">
+        <h1 class="admin-title">Admin Dashboard</h1>
+        <p class="admin-subtitle">Welcome to the admin dashboard. Use the options below to manage properties and users.</p>
+
+        <ul class="admin-dashboard-links">
+            <li>
+                <a href="@Url.Action("ViewByRegion", "Admin")" class="view-region">
+                    <span>View Properties by Region</span>
+                </a>
+            </li>
+            <li>
+                <a href="@Url.Action("OwnerList", "Admin")" class="owner-list">
+                    <span>View Properties by Owner</span>
+                </a>
+            </li>
+            <li>
+                <a href="@Url.Action("ViewProperties", "Admin")" class="view-properties">
+                    <span>View All Properties</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>

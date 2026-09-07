@@ -1,0 +1,714 @@
+﻿@model ProjectApp.ViewModels.PropertyDetailsViewModel
+
+@{
+    ViewData["Title"] = "Property Details";
+    
+    // Helper function to build full location string
+    string GetFullLocationString()
+    {
+        var locationParts = new List<string>();
+        
+        if (!string.IsNullOrWhiteSpace(Model.Address))
+            locationParts.Add(Model.Address.Trim());
+        
+        if (!string.IsNullOrWhiteSpace(Model.CityName))
+            locationParts.Add(Model.CityName.Trim());
+        
+        if (!string.IsNullOrWhiteSpace(Model.StateName))
+            locationParts.Add(Model.StateName.Trim());
+        
+        return locationParts.Any() ? string.Join(", ", locationParts) : "Location not specified";
+    }
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/property-details.css" />
+}
+
+<div class="hero-modern property-details-page">
+    <div class="property-details-container enhanced-cursor-effect">
+        <!-- Property Hero Section -->
+        <section class="property-hero-section enhanced-cursor-effect">
+            <div class="container-fluid">
+                <div class="property-hero-grid">
+                    <!-- Property Name and Price Container -->
+                    <div class="property-name-price-container">
+                        <h1 class="property-main-title">@Model.PropertyName</h1>
+                        
+                        <!-- Tags below title -->
+                        <div class="property-meta-row">
+                            <span class="item-badge @(Model.PropertyOption.ToLower() == "rent" ? "warning" : "success")">
+                                @Model.PropertyOption
+                            </span>
+                        </div>
+
+                        <!-- Price Display directly below name and tags (no box) -->
+                        <div class="hero-price-display">
+                            <span class="price-amount">₹@Model.Price.ToString("N0")</span>
+                            @if (Model.InitialDeposit.HasValue && Model.InitialDeposit > 0)
+                            {
+                                <span class="deposit-text">+ ₹@Model.InitialDeposit.Value.ToString("N0") security deposit</span>
+                            }
+                        </div>
+                    </div>
+                    
+                    <!-- Action buttons at top -->
+                    <div class="property-quick-actions">
+                        @if (ViewBag.BuyerId != null)
+                        {
+                            <a href="@Url.Action("ViewCart", "Cart", new { buyerId = ViewBag.BuyerId })" class="btn btn-secondary enhanced-cursor-effect">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5zM3.14 5l1.25 5h8.22l1.25-5H3.14zM5 13a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0z"/>
+                                </svg>
+                                View Cart
+                            </a>
+                        }
+                        
+                        <a asp-action="Index" asp-controller="BuyerProperty" asp-route-id="@ViewBag.BuyerId" class="btn btn-primary enhanced-cursor-effect">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+                            </svg>
+                            Back to Properties
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Content - Horizontal Merged Container -->
+        <div class="container-fluid">
+            <div class="property-content-merged">
+                
+                <!-- Horizontal Merged Images and Information Container -->
+                <div class="property-merged-container-horizontal">
+                    
+                    <!-- Left: Images Section -->
+                    <div class="property-images-section-horizontal">
+                        @if (Model.Images.Any())
+                        {
+                            <div class="carousel-wrapper enhanced-cursor-effect">
+                                <div class="carousel-container">
+                                    <!-- Main Image Display -->
+                                    <div class="main-image-container">
+                                        <div class="carousel-slides" id="carouselSlides">
+                                            @for (int i = 0; i < Model.Images.Count; i++)
+                                            {
+                                                var image = Model.Images[i];
+                                                var base64Image = Convert.ToBase64String(image.ImageData);
+                                                <div class="carousel-slide @(i == 0 ? "active" : "")" data-slide-index="@i">
+                                                    <img src="data:image/jpeg;base64,@base64Image" 
+                                                         alt="@Model.PropertyName - Image @(i + 1)" 
+                                                         loading="lazy" 
+                                                         onclick="openLightbox(@i)" />
+                                                    <div class="image-overlay" onclick="openLightbox(@i)">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 16 16">
+                                                            <path d="M1.5 1a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4A1.5 1.5 0 0 1 1.5 0h4a.5.5 0 0 1 0 1h-4zM10 .5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 16 1.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5zM.5 10a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 0 14.5v-4a.5.5 0 0 1 .5-.5zm15 0a.5.5 0 0 1 .5.5v4a1.5 1.5 0 0 1-1.5 1.5h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5z"/>
+                                                        </svg>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                        
+                                        <!-- Enhanced Navigation Controls -->
+                                        @if (Model.Images.Count > 1)
+                                        {
+                                            <button class="carousel-nav-btn prev enhanced-cursor-effect" onclick="event.stopPropagation(); previousSlide()">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                                                    <path d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+                                                </svg>
+                                            </button>
+                                            <button class="carousel-nav-btn next enhanced-cursor-effect" onclick="event.stopPropagation(); nextSlide()">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                                                    <path d="m4.646 1.646.708 0 6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+                                                </svg>
+                                            </button>
+                                        }
+                                        
+                                        <!-- Image Counter -->
+                                        <div class="image-counter">
+                                            <span id="slideCounter">1</span> / @Model.Images.Count
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Compact Thumbnail Strip -->
+                                    @if (Model.Images.Count > 1)
+                                    {
+                                        <div class="thumbnail-strip-compact">
+                                            @for (int i = 0; i < Model.Images.Count; i++)
+                                            {
+                                                var image = Model.Images[i];
+                                                var base64Image = Convert.ToBase64String(image.ImageData);
+                                                <div class="thumbnail-compact @(i == 0 ? "active" : "")" onclick="goToSlide(@i)">
+                                                    <img src="data:image/jpeg;base64,@base64Image" 
+                                                         alt="Thumbnail @(i + 1)" />
+                                                </div>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="no-images-container">
+                                <div class="no-images-content">
+                                    <svg class="no-images-icon" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+                                        <path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093L6.002 10.5l-1.448-1.448a.5.5 0 0 0-.708 0L1.002 12V3a1 1 0 0 1 1-1h12z"/>
+                                    </svg>
+                                    <h4>No Images Available</h4>
+                                    <p>This property doesn't have any images uploaded yet.</p>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Vertical Separator -->
+                    <div class="content-separator-vertical">
+                        <div class="separator-line-vertical"></div>
+                    </div>
+
+                    <!-- Right: Property Information Section -->
+                    <div class="property-info-section-horizontal">
+                        <!-- Property Details Header -->
+                        <div class="info-header">
+                            <h2 class="info-title">Property Information</h2>
+                            <div class="info-subtitle">Complete details about this property</div>
+                        </div>
+
+                        <!-- Property Information List -->
+                        <div class="info-list-container">
+                            
+                            <!-- Property Type -->
+                            <div class="info-row">
+                                <div class="info-label-row">
+                                    <div class="info-icon-wrapper">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                            <path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146z"/>
+                                        </svg>
+                                    </div>
+                                    <span class="info-label-text">Property Type</span>
+                                </div>
+                                <div class="info-value-row">@Model.PropertyType</div>
+                            </div>
+
+                            <!-- Location -->
+                            <div class="info-row">
+                                <div class="info-label-row">
+                                    <div class="info-icon-wrapper">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                            <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
+                                        </svg>
+                                    </div>
+                                    <span class="info-label-text">Location</span>
+                                </div>
+                                <div class="info-value-row">@GetFullLocationString()</div>
+                            </div>
+
+                            <!-- Landmark -->
+                            @if (!string.IsNullOrWhiteSpace(Model.Landmark))
+                            {
+                                <div class="info-row">
+                                    <div class="info-label-row">
+                                        <div class="info-icon-wrapper">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                                <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
+                                            </svg>
+                                        </div>
+                                        <span class="info-label-text">Nearby Landmark</span>
+                                    </div>
+                                    <div class="info-value-row">@Model.Landmark</div>
+                                </div>
+                            }
+
+                            <!-- Seller Information -->
+                            @if (!string.IsNullOrWhiteSpace(Model.SellerName))
+                            {
+                                <div class="info-row">
+                                    <div class="info-label-row">
+                                        <div class="info-icon-wrapper">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                                <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
+                                            </svg>
+                                        </div>
+                                        <span class="info-label-text">Seller</span>
+                                    </div>
+                                    <div class="info-value-row">@Model.SellerName</div>
+                                </div>
+                            }
+
+                            <!-- Contact Information -->
+                            @if (!string.IsNullOrWhiteSpace(Model.SellerContactInfo))
+                            {
+                                <div class="info-row">
+                                    <div class="info-label-row">
+                                        <div class="info-icon-wrapper">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                                <path d="M3.654 1.328a.678.678 0 0 1 1.015-.063l2.29 2.29c.329.329.445.81.293 1.234l-.547 1.64a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511z"/>
+                                            </svg>
+                                        </div>
+                                        <span class="info-label-text">Contact</span>
+                                    </div>
+                                    <div class="info-value-row">
+                                        <a href="tel:@Model.SellerContactInfo">@Model.SellerContactInfo</a>
+                                    </div>
+                                </div>
+                            }
+
+                            <!-- Email Information -->
+                            @if (!string.IsNullOrWhiteSpace(Model.SellerEmailId))
+                            {
+                                <div class="info-row">
+                                    <div class="info-label-row">
+                                        <div class="info-icon-wrapper">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                                <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z"/>
+                                            </svg>
+                                        </div>
+                                        <span class="info-label-text">Email</span>
+                                    </div>
+                                    <div class="info-value-row">
+                                        <a href="mailto:@Model.SellerEmailId">@Model.SellerEmailId</a>
+                                    </div>
+                                </div>
+                            }
+
+                            <!-- Description -->
+                            @if (!string.IsNullOrWhiteSpace(Model.Description))
+                            {
+                                <div class="info-row description-row">
+                                    <div class="info-label-row">
+                                        <div class="info-icon-wrapper">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                                <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+                                                <path d="M3 4.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3 6a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9A.5.5 0 0 1 3 6zm0 1.5a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5z"/>
+                                            </svg>
+                                        </div>
+                                        <span class="info-label-text">Description</span>
+                                    </div>
+                                    <div class="info-value-row description-content">@Model.Description</div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons Section -->
+                <div class="content-separator-horizontal">
+                    <div class="separator-line-horizontal"></div>
+                </div>
+
+                <div class="property-actions-section">
+                    <div class="actions-container">
+                        @if (ViewBag.BuyerId != null)
+                        {
+                            <form method="post" asp-controller="SpecificProperty" asp-action="AddToCart" asp-route-propertyId="@Model.PropertyId" asp-route-buyerId="@ViewBag.BuyerId" class="action-form-inline enhanced-cursor-effect">
+                                <button type="submit" class="btn btn-primary action-btn-large enhanced-cursor-effect">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5zM3.14 5l1.25 5h8.22l1.25-5H3.14zM5 13a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0z"/>
+                                    </svg>
+                                    Add to Cart
+                                </button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Image Lightbox Modal -->
+        @if (Model.Images.Any())
+        {
+            <div class="lightbox-overlay" id="lightboxOverlay">
+                <div class="lightbox-container">
+                    <!-- Close Button -->
+                    <button class="lightbox-close" onclick="closeLightbox()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
+                        </svg>
+                    </button>
+                    
+                    <!-- Lightbox Image Container -->
+                    <div class="lightbox-image-container">
+                        <div class="lightbox-slides" id="lightboxSlides">
+                            @for (int i = 0; i < Model.Images.Count; i++)
+                            {
+                                var image = Model.Images[i];
+                                var base64Image = Convert.ToBase64String(image.ImageData);
+                                <div class="lightbox-slide @(i == 0 ? "active" : "")" data-lightbox-index="@i">
+                                    <img src="data:image/jpeg;base64,@base64Image" 
+                                         alt="@Model.PropertyName - Image @(i + 1)" />
+                                </div>
+                            }
+                        </div>
+                        
+                        <!-- Lightbox Navigation -->
+                        @if (Model.Images.Count > 1)
+                        {
+                            <button class="lightbox-nav prev" onclick="previousLightboxSlide()">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+                                </svg>
+                            </button>
+                            <button class="lightbox-nav next" onclick="nextLightboxSlide()">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="m4.646 1.646.708 0 6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+                                </svg>
+                            </button>
+                        }
+                        
+                        <!-- Lightbox Counter -->
+                        <div class="lightbox-counter">
+                            <span id="lightboxCounter">1</span> / @Model.Images.Count
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Enhanced cursor following for property details specific elements
+            function initPropertyDetailsCursorEffects() {
+                const enhancedElements = document.querySelectorAll('.enhanced-cursor-effect');
+                
+                enhancedElements.forEach(element => {
+                    element.style.setProperty('--cursor-x', '50%');
+                    element.style.setProperty('--cursor-y', '50%');
+                    element.style.setProperty('--show-cursor-blur', '0');
+
+                    element.addEventListener('mouseenter', function(e) {
+                        this.style.setProperty('--show-cursor-blur', '1');
+                        const rect = this.getBoundingClientRect();
+                        const x = e.clientX - rect.left;
+                        const y = e.clientY - rect.top;
+                        this.style.setProperty('--cursor-x', x + 'px');
+                        this.style.setProperty('--cursor-y', y + 'px');
+                    });
+
+                    element.addEventListener('mouseleave', function() {
+                        this.style.setProperty('--show-cursor-blur', '0');
+                    });
+
+                    element.addEventListener('mousemove', function(e) {
+                        const rect = this.getBoundingClientRect();
+                        const x = e.clientX - rect.left;
+                        const y = e.clientY - rect.top;
+                        
+                        requestAnimationFrame(() => {
+                            this.style.setProperty('--cursor-x', x + 'px');
+                            this.style.setProperty('--cursor-y', y + 'px');
+                            this.style.setProperty('--show-cursor-blur', '1');
+                        });
+                    });
+                });
+            }
+
+            initPropertyDetailsCursorEffects();
+
+            // Page animation
+            const propertyContainer = document.querySelector('.property-details-container');
+            if (propertyContainer) {
+                propertyContainer.style.opacity = '0';
+                propertyContainer.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    propertyContainer.style.transition = 'opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+                    propertyContainer.style.opacity = '1';
+                    propertyContainer.style.transform = 'translateY(0)';
+                }, 100);
+            }
+
+            // Enhanced Carousel functionality
+            let currentSlide = 0;
+            let currentLightboxSlide = 0;
+            const totalSlides = @Model.Images.Count;
+
+            function updateCarousel() {
+                const slides = document.querySelectorAll('.carousel-slide');
+                const thumbnails = document.querySelectorAll('.thumbnail-compact');
+                const counter = document.getElementById('slideCounter');
+                
+                // Update slides
+                slides.forEach((slide, index) => {
+                    slide.classList.toggle('active', index === currentSlide);
+                });
+                
+                // Update thumbnails
+                thumbnails.forEach((thumb, index) => {
+                    thumb.classList.toggle('active', index === currentSlide);
+                });
+                
+                // Update counter
+                if (counter) {
+                    counter.textContent = currentSlide + 1;
+                }
+            }
+
+            function updateLightbox() {
+                const lightboxSlides = document.querySelectorAll('.lightbox-slide');
+                const lightboxCounter = document.getElementById('lightboxCounter');
+                
+                // Update lightbox slides
+                lightboxSlides.forEach((slide, index) => {
+                    slide.classList.toggle('active', index === currentLightboxSlide);
+                });
+                
+                // Update lightbox counter
+                if (lightboxCounter) {
+                    lightboxCounter.textContent = currentLightboxSlide + 1;
+                }
+            }
+
+            function nextSlide() {
+                currentSlide = (currentSlide + 1) % totalSlides;
+                updateCarousel();
+            }
+
+            function previousSlide() {
+                currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+                updateCarousel();
+            }
+
+            function goToSlide(index) {
+                currentSlide = index;
+                updateCarousel();
+            }
+
+            function nextLightboxSlide() {
+                currentLightboxSlide = (currentLightboxSlide + 1) % totalSlides;
+                updateLightbox();
+            }
+
+            function previousLightboxSlide() {
+                currentLightboxSlide = (currentLightboxSlide - 1 + totalSlides) % totalSlides;
+                updateLightbox();
+            }
+
+            function openLightbox(index) {
+                currentLightboxSlide = index || 0;
+                updateLightbox();
+                const lightbox = document.getElementById('lightboxOverlay');
+                if (lightbox) {
+                    lightbox.style.display = 'flex';
+                    lightbox.style.overflow = 'hidden';
+                    document.body.style.overflow = 'hidden';
+                    setTimeout(() => {
+                        lightbox.classList.add('active');
+                    }, 10);
+                }
+            }
+
+            function closeLightbox() {
+                const lightbox = document.getElementById('lightboxOverlay');
+                if (lightbox) {
+                    lightbox.classList.remove('active');
+                    lightbox.style.overflow = '';
+                    document.body.style.overflow = '';
+                    setTimeout(() => {
+                        lightbox.style.display = 'none';
+                    }, 300);
+                }
+            }
+
+            // Make functions globally available
+            window.nextSlide = nextSlide;
+            window.previousSlide = previousSlide;
+            window.goToSlide = goToSlide;
+            window.nextLightboxSlide = nextLightboxSlide;
+            window.previousLightboxSlide = previousLightboxSlide;
+            window.openLightbox = openLightbox;
+            window.closeLightbox = closeLightbox;
+
+            // Initialize carousel
+            if (totalSlides > 0) {
+                // Auto-advance carousel
+                let autoAdvance;
+                function startAutoAdvance() {
+                    if (totalSlides > 1) {
+                        autoAdvance = setInterval(nextSlide, 7000);
+                    }
+                }
+
+                function stopAutoAdvance() {
+                    clearInterval(autoAdvance);
+                }
+
+                startAutoAdvance();
+                
+                // Pause on hover
+                const carouselWrapper = document.querySelector('.carousel-wrapper');
+                if (carouselWrapper) {
+                    carouselWrapper.addEventListener('mouseenter', stopAutoAdvance);
+                    carouselWrapper.addEventListener('mouseleave', startAutoAdvance);
+                }
+                
+                // Keyboard navigation for both carousel and lightbox
+                document.addEventListener('keydown', function(e) {
+                    const lightbox = document.getElementById('lightboxOverlay');
+                    const isLightboxOpen = lightbox && lightbox.classList.contains('active');
+                    
+                    if (isLightboxOpen) {
+                        e.preventDefault();
+                        if (e.key === 'ArrowLeft') {
+                            previousLightboxSlide();
+                        } else if (e.key === 'ArrowRight') {
+                            nextLightboxSlide();
+                        } else if (e.key === 'Escape') {
+                            closeLightbox();
+                        }
+                    } else {
+                        if (e.key === 'ArrowLeft') {
+                            previousSlide();
+                            stopAutoAdvance();
+                            setTimeout(startAutoAdvance, 12000);
+                        } else if (e.key === 'ArrowRight') {
+                            nextSlide();
+                            stopAutoAdvance();
+                            setTimeout(startAutoAdvance, 12000);
+                        }
+                    }
+                });
+
+                // Lightbox click handler
+                const lightboxOverlay = document.getElementById('lightboxOverlay');
+                if (lightboxOverlay) {
+                    lightboxOverlay.addEventListener('click', function(e) {
+                        if (e.target === lightboxOverlay) {
+                            closeLightbox();
+                        }
+                    });
+                }
+
+                // Touch support for mobile - main carousel
+                let startX = 0;
+                let isDragging = false;
+
+                const mainImageContainer = document.querySelector('.main-image-container');
+                if (mainImageContainer) {
+                    mainImageContainer.addEventListener('touchstart', function(e) {
+                        startX = e.touches[0].clientX;
+                        isDragging = true;
+                        stopAutoAdvance();
+                    });
+
+                    mainImageContainer.addEventListener('touchmove', function(e) {
+                        if (!isDragging) return;
+                        e.preventDefault();
+                    });
+
+                    mainImageContainer.addEventListener('touchend', function(e) {
+                        if (!isDragging) return;
+                        isDragging = false;
+                        
+                        const endX = e.changedTouches[0].clientX;
+                        const diffX = startX - endX;
+                        
+                        if (Math.abs(diffX) > 50) {
+                            if (diffX > 0) {
+                                nextSlide();
+                            } else {
+                                previousSlide();
+                            }
+                        }
+                        
+                        setTimeout(startAutoAdvance, 10000);
+                    });
+                }
+
+                // Touch support for lightbox
+                const lightboxImageContainer = document.querySelector('.lightbox-image-container');
+                if (lightboxImageContainer) {
+                    let lightboxStartX = 0;
+                    let lightboxDragging = false;
+
+                    lightboxImageContainer.addEventListener('touchstart', function(e) {
+                        lightboxStartX = e.touches[0].clientX;
+                        lightboxDragging = true;
+                    });
+
+                    lightboxImageContainer.addEventListener('touchmove', function(e) {
+                        if (!lightboxDragging) return;
+                        e.preventDefault();
+                    });
+
+                    lightboxImageContainer.addEventListener('touchend', function(e) {
+                        if (!lightboxDragging) return;
+                        lightboxDragging = false;
+                        
+                        const endX = e.changedTouches[0].clientX;
+                        const diffX = lightboxStartX - endX;
+                        
+                        if (Math.abs(diffX) > 50) {
+                            if (diffX > 0) {
+                                nextLightboxSlide();
+                            } else {
+                                previousLightboxSlide();
+                            }
+                        }
+                    });
+                }
+            }
+
+            // Enhanced button animations
+            const buttons = document.querySelectorAll('.btn');
+            buttons.forEach(button => {
+                button.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-3px) scale(1.03)';
+                    this.style.boxShadow = '0 10px 30px rgba(37, 99, 235, 0.4)';
+                });
+                
+                button.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                    this.style.boxShadow = '';
+                });
+            });
+
+            // Staggered animations for info rows
+            const infoRows = document.querySelectorAll('.info-row');
+            infoRows.forEach((row, index) => {
+                row.style.opacity = '0';
+                row.style.transform = 'translateX(30px)';
+                
+                setTimeout(() => {
+                    row.style.transition = 'opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                    row.style.opacity = '1';
+                    row.style.transform = 'translateX(0)';
+                }, 600 + (index * 150));
+            });
+
+            // Add loading state to cart button
+            const cartForm = document.querySelector('.action-form-inline');
+            if (cartForm) {
+                cartForm.addEventListener('submit', function() {
+                    const button = this.querySelector('button');
+                    button.disabled = true;
+                    button.innerHTML = '<div class="spinner"></div>Adding to Cart...';
+                });
+            }
+
+            // Intersection Observer for scroll animations
+            if ('IntersectionObserver' in window) {
+                const observerOptions = {
+                    threshold: 0.2,
+                    rootMargin: '0px 0px -100px 0px'
+                };
+
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('animate-in');
+                        }
+                    });
+                }, observerOptions);
+
+                // Observe main container
+                const observeElements = document.querySelectorAll('.property-merged-container-horizontal');
+                observeElements.forEach(el => observer.observe(el));
+            }
+        });
+    </script>
+}

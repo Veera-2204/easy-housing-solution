@@ -1,0 +1,433 @@
+﻿@model ProjectApp.Models.Seller
+
+@{
+    ViewData["Title"] = "Seller Dashboard";
+}
+
+<!-- Alert Messages -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div style="position: fixed; top: 120px; right: 2rem; z-index: 9999; background: linear-gradient(135deg, rgba(34, 197, 94, 0.9), rgba(16, 185, 129, 0.9)); color: white; padding: 1rem 2rem; border-radius: 0.75rem; backdrop-filter: blur(10px); border: 1px solid rgba(34, 197, 94, 0.3); box-shadow: 0 8px 24px rgba(34, 197, 94, 0.3);" class="alert-auto-hide">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.061L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+            </svg>
+            <span>@TempData["SuccessMessage"]</span>
+        </div>
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div style="position: fixed; top: 120px; right: 2rem; z-index: 9999; background: linear-gradient(135deg, rgba(239, 68, 68, 0.9), rgba(220, 38, 38, 0.9)); color: white; padding: 1rem 2rem; border-radius: 0.75rem; backdrop-filter: blur(10px); border: 1px solid rgba(239, 68, 68, 0.3); box-shadow: 0 8px 24px rgba(239, 68, 68, 0.3);" class="alert-auto-hide">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+            </svg>
+            <span>@TempData["ErrorMessage"]</span>
+        </div>
+    </div>
+}
+
+<div class="hero-modern seller-dashboard">
+    <div class="container-fluid">
+        <!-- Dashboard Header -->
+        <div class="dashboard-header enhanced-cursor-effect">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <div class="seller-welcome">
+                        <h1 class="dashboard-title">Welcome back, @Model.FirstName!</h1>
+                        <p class="dashboard-subtitle">Here's an overview of your property listings</p>
+                    </div>
+                </div>
+                <div class="col-md-4 text-end">
+                    <div class="dashboard-actions">
+                        <a class="btn btn-primary" asp-controller="Property" asp-action="Create" asp-route-sellerId="@ViewBag.SellerId">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                            </svg>
+                            Add New Property
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Stats -->
+        @if (Model.Properties != null && Model.Properties.Any())
+        {
+            <div class="dashboard-stats">
+                <div class="row">
+                    <div class="col-lg-3 col-md-6 mb-4">
+                        <div class="stat-card enhanced-cursor-effect">
+                            <div class="stat-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
+                                    <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z"/>
+                                </svg>
+                            </div>
+                            <div class="stat-content">
+                                <h3>@Model.Properties.Count()</h3>
+                                <p>Total Properties</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 mb-4">
+                        <div class="stat-card enhanced-cursor-effect">
+                            <div class="stat-icon active">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
+                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                    <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
+                                </svg>
+                            </div>
+                            <div class="stat-content">
+                                <h3>@Model.Properties.Count(p => p.IsActive)</h3>
+                                <p>Active Listings</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 mb-4">
+                        <div class="stat-card enhanced-cursor-effect">
+                            <div class="stat-icon sale">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-tag" viewBox="0 0 16 16">
+                                    <path d="M6 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm-1 0a.5.5 0 1 0-1 0 .5.5 0 0 0 1 0z"/>
+                                    <path d="M2 1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 1 6.586V2a1 1 0 0 1 1-1zm0 5.586 7 7L13.586 9l-7-7H2v4.586z"/>
+                                </svg>
+                            </div>
+                            <div class="stat-content">
+                                <h3>@Model.Properties.Count(p => p.PropertyOption.ToLower() == "sell")</h3>
+                                <p>For Sale</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 mb-4">
+                        <div class="stat-card enhanced-cursor-effect">
+                            <div class="stat-icon rent">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-key" viewBox="0 0 16 16">
+                                    <path d="M0 8a4 4 0 0 1 7.465-2H14a.5.5 0 0 1 .354.146l1.5 1.5a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0L13 9.207l-.646.647a.5.5 0 0 1-.708 0L11 9.207l-.646.647a.5.5 0 0 1-.708 0L9 9.207l-.646.647A.5.5 0 0 1 8 10h-.535A4 4 0 0 1 0 8zm4-3a3 3 0 1 0 2.712 4.285A.5.5 0 0 1 7.163 9h.63l.853-.854a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.793-.793-1-1h-6.63a.5.5 0 0 1-.451-.285A3 3 0 0 0 4 5z"/>
+                                    <path d="M4 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+                                </svg>
+                            </div>
+                            <div class="stat-content">
+                                <h3>@Model.Properties.Count(p => p.PropertyOption.ToLower() == "rent")</h3>
+                                <p>For Rent</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Properties Section -->
+        <div class="properties-section enhanced-cursor-effect">
+            <div class="section-header">
+                <h2 class="section-title">Your Properties</h2>
+                @if (Model.Properties != null && Model.Properties.Any())
+                {
+                    <div class="section-filters">
+                        <div class="filter-buttons">
+                            <button class="filter-btn active" data-filter="all">All (@Model.Properties.Count())</button>
+                            <button class="filter-btn" data-filter="active">Active (@Model.Properties.Count(p => p.IsActive))</button>
+                            <button class="filter-btn" data-filter="inactive">Inactive (@Model.Properties.Count(p => !p.IsActive))</button>
+                            <button class="filter-btn" data-filter="sell">For Sale (@Model.Properties.Count(p => p.PropertyOption.ToLower() == "sell"))</button>
+                            <button class="filter-btn" data-filter="rent">For Rent (@Model.Properties.Count(p => p.PropertyOption.ToLower() == "rent"))</button>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- Property Cards Container -->
+            <div class="property-grid">
+                @if (Model.Properties != null && Model.Properties.Any())
+                {
+                    @foreach (var property in Model.Properties)
+                    {
+                        <div class="property-card enhanced-cursor-effect" 
+                             data-status="@(property.IsActive ? "active" : "inactive")" 
+                             data-type="@property.PropertyOption.ToLower()">
+                            <div class="property-image">
+                                @if (property.Images != null && property.Images.Any())
+                                {
+                                    <img src="data:image/jpeg;base64,@Convert.ToBase64String(property.Images.First().ImageData)" alt="@property.PropertyName" />
+                                }
+                                else
+                                {
+                                    <div class="no-image-placeholder">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-image" viewBox="0 0 16 16">
+                                            <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
+                                            <path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1z"/>
+                                        </svg>
+                                        <p>No Image</p>
+                                    </div>
+                                }
+                                <div class="image-overlay"></div>
+                            </div>
+                            
+                            <div class="property-badge @property.PropertyOption.ToLower()">
+                                @property.PropertyOption
+                            </div>
+                            
+                            <div class="verification-badge @(property.IsActive ? "active" : "inactive")">
+                                @if (property.IsActive)
+                                {
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
+                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                        <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
+                                    </svg>
+                                }
+                                else
+                                {
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
+                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                                    </svg>
+                                }
+                            </div>
+                            
+                            <div class="property-details">
+                                <h3>@property.PropertyName</h3>
+                                
+                                <div class="property-meta">
+                                    <span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
+                                            <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z"/>
+                                        </svg>
+                                        @property.PropertyType
+                                    </span>
+                                    <span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
+                                            <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10"/>
+                                        </svg>
+                                        @property.City?.CityName, @property.Address
+                                    </span>
+                                </div>
+                                
+                                <div class="property-details-row">
+                                    <div class="property-price">
+                                        @property.PriceRange.ToString("C")
+                                    </div>
+                                    @if (property.InitialDeposit.HasValue && property.InitialDeposit.Value > 0)
+                                    {
+                                        <div class="property-deposit">
+                                            Deposit: @property.InitialDeposit.Value.ToString("C")
+                                        </div>
+                                    }
+                                </div>
+                                
+                                @if (!string.IsNullOrEmpty(property.Landmark))
+                                {
+                                    <div class="property-landmark">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pin-map" viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd" d="M3.1 11.2a.5.5 0 0 1 .4-.2H6a.5.5 0 0 1 0 1H3.75L1.5 15h13l-2.25-3H10a.5.5 0 0 1 0-1h2.5a.5.5 0 0 1 .4.2l3 4a.5.5 0 0 1-.4.8H.5a.5.5 0 0 1-.4-.8l3-4z"/>
+                                        </svg>
+                                        @property.Landmark
+                                    </div>
+                                }
+                                
+                                <div class="property-actions">
+                                    <a asp-controller="Property" asp-action="Edit" asp-route-id="@property.PropertyId" class="btn btn-info">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                            <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                            <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                                        </svg>
+                                        Edit
+                                    </a>
+                                    <a asp-controller="Seller" asp-action="PropertyDetails" asp-route-propertyId="@property.PropertyId" class="btn btn-info">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                                            <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
+                                            <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>
+                                        </svg>
+                                        View
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="no-properties">
+                        <div class="empty-state enhanced-cursor-effect">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="bi bi-house-add" viewBox="0 0 16 16">
+                                <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z"/>
+                                <path d="M8 4a.5.5 0 0 1 .5.5V6H10a.5.5 0 0 1 0 1H8.5v1.5a.5.5 0 0 1-1 0V7H6a.5.5 0 0 1 0-1h1.5V4.5A.5.5 0 0 1 8 4"/>
+                            </svg>
+                            <h3>No Properties Listed Yet</h3>
+                            <p>Start building your property portfolio by adding your first listing.</p>
+                            <a class="btn btn-primary" asp-controller="Property" asp-action="Create" asp-route-sellerId="@ViewBag.SellerId">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                                </svg>
+                                List Your First Property
+                            </a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-hide alerts after 5 seconds
+            const alerts = document.querySelectorAll('.alert-auto-hide');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    alert.style.opacity = '0';
+                    alert.style.transform = 'translateX(100%)';
+                    setTimeout(() => alert.remove(), 500);
+                }, 5000);
+            });
+
+            // Enhanced animation for seller dashboard
+            const dashboardHeader = document.querySelector('.dashboard-header');
+            const dashboardStats = document.querySelector('.dashboard-stats');
+            const propertiesSection = document.querySelector('.properties-section');
+            const propertyCards = document.querySelectorAll('.property-card');
+            
+            // Initial state
+            if (dashboardHeader) dashboardHeader.style.opacity = '0';
+            if (dashboardStats) dashboardStats.style.opacity = '0';
+            if (propertiesSection) propertiesSection.style.opacity = '0';
+            
+            // Staggered animation
+            setTimeout(() => {
+                if (dashboardHeader) {
+                    dashboardHeader.style.transition = 'opacity 0.6s ease-in-out, transform 0.6s ease-in-out';
+                    dashboardHeader.style.transform = 'translateY(20px)';
+                    dashboardHeader.style.opacity = '1';
+                    dashboardHeader.style.transform = 'translateY(0)';
+                }
+            }, 100);
+            
+            setTimeout(() => {
+                if (dashboardStats) {
+                    dashboardStats.style.transition = 'opacity 0.6s ease-in-out, transform 0.6s ease-in-out';
+                    dashboardStats.style.transform = 'translateY(20px)';
+                    dashboardStats.style.opacity = '1';
+                    dashboardStats.style.transform = 'translateY(0)';
+                }
+            }, 300);
+            
+            setTimeout(() => {
+                if (propertiesSection) {
+                    propertiesSection.style.transition = 'opacity 0.6s ease-in-out, transform 0.6s ease-in-out';
+                    propertiesSection.style.transform = 'translateY(20px)';
+                    propertiesSection.style.opacity = '1';
+                    propertiesSection.style.transform = 'translateY(0)';
+                }
+            }, 500);
+            
+            // Individual card animations
+            propertyCards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 700 + (index * 100));
+            });
+
+            // Enhanced cursor following for dashboard specific elements
+            function initDashboardCursorEffects() {
+                const enhancedElements = document.querySelectorAll('.enhanced-cursor-effect');
+                
+                enhancedElements.forEach(element => {
+                    // Set initial cursor position variables
+                    element.style.setProperty('--cursor-x', '50%');
+                    element.style.setProperty('--cursor-y', '50%');
+                    element.style.setProperty('--show-cursor-blur', '0');
+
+                    element.addEventListener('mouseenter', function(e) {
+                        this.style.setProperty('--show-cursor-blur', '1');
+                        
+                        // Calculate initial position on enter
+                        const rect = this.getBoundingClientRect();
+                        const x = e.clientX - rect.left;
+                        const y = e.clientY - rect.top;
+                        
+                        this.style.setProperty('--cursor-x', x + 'px');
+                        this.style.setProperty('--cursor-y', y + 'px');
+                    });
+
+                    element.addEventListener('mouseleave', function() {
+                        this.style.setProperty('--show-cursor-blur', '0');
+                    });
+
+                    element.addEventListener('mousemove', function(e) {
+                        const rect = this.getBoundingClientRect();
+                        const x = e.clientX - rect.left;
+                        const y = e.clientY - rect.top;
+                        
+                        // Smooth cursor following with requestAnimationFrame for better performance
+                        requestAnimationFrame(() => {
+                            this.style.setProperty('--cursor-x', x + 'px');
+                            this.style.setProperty('--cursor-y', y + 'px');
+                            this.style.setProperty('--show-cursor-blur', '1');
+                        });
+                    });
+                });
+            }
+
+            // Initialize enhanced cursor effects for dashboard
+            initDashboardCursorEffects();
+
+            // Re-initialize cursor effects when filter changes (for dynamically shown/hidden cards)
+            function reinitializeCursorEffects() {
+                setTimeout(() => {
+                    initDashboardCursorEffects();
+                }, 100);
+            }
+
+            // Filter functionality
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const properties = document.querySelectorAll('.property-card');
+
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    // Add active class to clicked button
+                    this.classList.add('active');
+
+                    const filterValue = this.getAttribute('data-filter');
+
+                    properties.forEach((property, index) => {
+                        if (filterValue === 'all') {
+                            property.style.display = 'block';
+                            setTimeout(() => {
+                                property.style.opacity = '1';
+                                property.style.transform = 'translateY(0)';
+                            }, index * 50);
+                        } else {
+                            const status = property.getAttribute('data-status');
+                            const type = property.getAttribute('data-type');
+                            
+                            if (filterValue === status || filterValue === type) {
+                                property.style.display = 'block';
+                                setTimeout(() => {
+                                    property.style.opacity = '1';
+                                    property.style.transform = 'translateY(0)';
+                                }, index * 50);
+                            } else {
+                                property.style.opacity = '0';
+                                property.style.transform = 'translateY(20px)';
+                                setTimeout(() => {
+                                    property.style.display = 'none';
+                                }, 300);
+                            }
+                        }
+                    });
+
+                    // Reinitialize cursor effects after filter animation
+                    reinitializeCursorEffects();
+                });
+            });
+        });
+    </script>
+}

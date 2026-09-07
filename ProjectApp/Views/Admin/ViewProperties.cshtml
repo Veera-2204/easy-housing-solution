@@ -1,0 +1,147 @@
+﻿@model IEnumerable<ProjectApp.Models.Property>
+
+@{
+    ViewData["Title"] = "View All Properties";
+}
+
+<div class="admin-page">
+    <div class="admin-container">
+        <h1 class="admin-title">View All Properties</h1>
+        <p class="admin-subtitle">Manage and monitor all properties in the system</p>
+
+        <!-- Navigation Button -->
+        <div class="admin-button-group align-right">
+            <a href="@Url.Action("AdminDashboard", "Admin")" class="admin-btn admin-btn-secondary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
+                </svg>
+                Go to Dashboard
+            </a>
+        </div>
+
+        <!-- Filter Form -->
+        <div style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.02), rgba(37, 99, 235, 0.05)); border: 2px solid rgba(255, 255, 255, 0.1); border-radius: var(--radius-xl); padding: var(--spacing-xl); margin-bottom: var(--spacing-2xl); backdrop-filter: blur(20px);">
+            <h3 style="color: var(--text-light-primary); font-size: 1.5rem; font-weight: 700; margin-bottom: var(--spacing-lg); text-align: center;">Filter Properties</h3>
+            
+            @using (Html.BeginForm("ViewProperties", "Admin", FormMethod.Get, new { @class = "row" }))
+            {
+                <!-- Property Type Filter -->
+                <div class="col-md-4 mb-3">
+                    <label style="display: flex; align-items: center; gap: var(--spacing-sm); color: var(--text-light-secondary); font-weight: 600; margin-bottom: var(--spacing-sm);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146z"/>
+                        </svg>
+                        Property Type:
+                    </label>
+                    <select name="propertyType" class="form-control" style="width: 100%; padding: 1rem; background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(37, 99, 235, 0.05)); border: 2px solid rgba(255, 255, 255, 0.2); border-radius: var(--radius-lg); color: var(--text-light-primary); backdrop-filter: blur(10px);">
+                        <option value="">All Property Types</option>
+                        <option value="House">House</option>
+                        <option value="Apartment">Apartment</option>
+                        <option value="Villa">Villa</option>
+                        <option value="Plot">Plot</option>
+                        <option value="Commercial">Commercial</option>
+                    </select>
+                </div>
+
+                <!-- Status Filter -->
+                <div class="col-md-4 mb-3">
+                    <label style="display: flex; align-items: center; gap: var(--spacing-sm); color: var(--text-light-secondary); font-weight: 600; margin-bottom: var(--spacing-sm);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z"/>
+                        </svg>
+                        Status:
+                    </label>
+                    <select name="status" class="form-control" style="width: 100%; padding: 1rem; background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(37, 99, 235, 0.05)); border: 2px solid rgba(255, 255, 255, 0.2); border-radius: var(--radius-lg); color: var(--text-light-primary); backdrop-filter: blur(10px);">
+                        <option value="">All Properties</option>
+                        <option value="Active">Active Only</option>
+                        <option value="Inactive">Inactive Only</option>
+                    </select>
+                </div>
+
+                <!-- Filter Button -->
+                <div class="col-md-4 mb-3 d-flex align-items-end">
+                    <button type="submit" class="admin-btn admin-btn-primary" style="width: 100%;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M6 10.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5m-2-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m-2-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5"/>
+                        </svg>
+                        Apply Filters
+                    </button>
+                </div>
+            }
+        </div>
+
+        <!-- Properties Table -->
+        <div class="admin-table-container">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Property Name</th>
+                        <th>Type</th>
+                        <th>Address</th>
+                        <th>Price Range</th>
+                        <th>Deposit</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var property in Model)
+                    {
+                        <tr class="@(property.IsActive ? "active" : "inactive")">
+                            <td title="@property.PropertyName">@property.PropertyName</td>
+                            <td>@property.PropertyType</td>
+                            <td title="@property.Address">@property.Address</td>
+                            <td>₹@property.PriceRange.ToString("N0")</td>
+                            <td>₹@(property.InitialDeposit?.ToString("N0") ?? "0")</td>
+                            <td>
+                                @if (property.IsActive)
+                                {
+                                    <span class="status-verified">Active</span>
+                                }
+                                else
+                                {
+                                    <span class="status-not-verified">Inactive</span>
+                                }
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="@Url.Action("Details", "Admin", new { propertyId = property.PropertyId })" 
+                                       class="admin-btn admin-btn-primary" 
+                                       title="View Details">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                                            <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
+                                            <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>
+                                        </svg>
+                                        View
+                                    </a>
+                                    @if (property.IsActive)
+                                    {
+                                        <a href="@Url.Action("DeactivateProperty", "Admin", new { id = property.PropertyId })"
+                                           class="admin-btn admin-btn-danger"
+                                           title="Deactivate Property">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                                                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
+                                            </svg>
+                                            Deactivate
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Action("VerifyProperty", "Admin", new { id = property.PropertyId })"
+                                           class="admin-btn admin-btn-success"
+                                           title="Verify Property">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                                                <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z"/>
+                                            </svg>
+                                            Verify
+                                        </a>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

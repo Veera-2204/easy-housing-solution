@@ -1,0 +1,152 @@
+﻿@model ProjectApp.Models.Buyer
+
+@{
+    ViewData["Title"] = "Buyer Dashboard";
+}
+
+<!-- Alert Messages -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div style="position: fixed; top: 120px; right: 2rem; z-index: 9999; background: linear-gradient(135deg, rgba(34, 197, 94, 0.9), rgba(16, 185, 129, 0.9)); color: white; padding: 1rem 2rem; border-radius: 0.75rem; backdrop-filter: blur(10px); border: 1px solid rgba(34, 197, 94, 0.3); box-shadow: 0 8px 24px rgba(34, 197, 94, 0.3);" class="alert-auto-hide">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.061L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+            </svg>
+            <span>@TempData["SuccessMessage"]</span>
+        </div>
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div style="position: fixed; top: 120px; right: 2rem; z-index: 9999; background: linear-gradient(135deg, rgba(239, 68, 68, 0.9), rgba(220, 38, 38, 0.9)); color: white; padding: 1rem 2rem; border-radius: 0.75rem; backdrop-filter: blur(10px); border: 1px solid rgba(239, 68, 68, 0.3); box-shadow: 0 8px 24px rgba(239, 68, 68, 0.3);" class="alert-auto-hide">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+            </svg>
+            <span>@TempData["ErrorMessage"]</span>
+        </div>
+    </div>
+}
+
+<!-- Hero Section with Buyer Welcome -->
+<section class="hero-modern home-hero">
+    <div class="hero-content">
+        <div class="hero-text-content">
+            <h1 class="hero-title">Welcome back, @Model.FirstName!</h1>
+            <p class="hero-subtitle">Continue your property search journey and manage your saved favorites</p>
+            @{
+                var cartItems = ViewBag.CartItems as List<ProjectApp.Models.Cart> ?? new List<ProjectApp.Models.Cart>();
+            }
+            @if (cartItems.Any())
+            {
+                <div style="margin-top: 2rem;">
+                    <div style="background: rgba(255, 255, 255, 0.1); padding: 1rem 2rem; border-radius: 2rem; display: inline-block; margin-bottom: 1rem;">
+                        <span style="color: var(--text-light-primary); font-weight: 600;">@cartItems.Count() properties in your cart</span>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="hero-actions" style="justify-content: space-evenly;">
+            <a href="@Url.Action("Index", "BuyerProperty", new { id = ViewBag.BuyerId })" class="hero-cta-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                </svg>
+                Browse Properties
+            </a>
+            @if (cartItems.Any())
+            {
+                <a href="@Url.Action("ViewCart", "Cart", new { buyerId = ViewBag.BuyerId })" class="hero-cta-button" style="background: rgba(255, 255, 255, 0.1); border: 2px solid rgba(255, 255, 255, 0.3);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5zM3.14 5l1.25 5h8.22l1.25-5H3.14zM5 13a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0z"/>
+                    </svg>
+                    View Cart (@cartItems.Count())
+                </a>
+            }
+        </div>
+    </div>
+</section>
+
+@if (cartItems.Any())
+{
+    <!-- Cart Preview Section -->
+    <section style="padding: 4rem 0; background: var(--bg-dark-secondary);">
+        <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 2rem;">
+            <div style="text-align: center; margin-bottom: 3rem;">
+                <h2 style="color: var(--text-light-primary); font-size: 2.5rem; font-weight: 700; margin-bottom: 1rem;">Your Saved Properties</h2>
+                <p style="color: var(--text-light-muted); font-size: 1.125rem;">Properties you've added to your cart for consideration</p>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 3rem;">
+                @{
+                    var cartItemsForSale = cartItems.Where(c => c.Property.PropertyOption.ToLower() == "sell").Count();
+                    var cartItemsForRent = cartItems.Where(c => c.Property.PropertyOption.ToLower() == "rent").Count();
+                    var totalCartValue = cartItems.Sum(c => c.Property.PriceRange);
+                }
+                
+                <div style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(37, 99, 235, 0.1)); border-radius: 1rem; padding: 2rem; text-align: center; border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <div style="font-size: 3rem; font-weight: 800; color: var(--text-light-primary); margin-bottom: 0.5rem;">@cartItemsForSale</div>
+                    <div style="color: var(--text-light-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Properties to Buy</div>
+                </div>
+                
+                <div style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(245, 158, 11, 0.1)); border-radius: 1rem; padding: 2rem; text-align: center; border: 1px solid rgba(245, 158, 11, 0.2);">
+                    <div style="font-size: 3rem; font-weight: 800; color: var(--text-light-primary); margin-bottom: 0.5rem;">@cartItemsForRent</div>
+                    <div style="color: var(--text-light-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Properties to Rent</div>
+                </div>
+                
+                <div style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(16, 185, 129, 0.1)); border-radius: 1rem; padding: 2rem; text-align: center; border: 1px solid rgba(16, 185, 129, 0.2);">
+                    <div style="font-size: 2rem; font-weight: 800; color: var(--text-light-primary); margin-bottom: 0.5rem;">@totalCartValue.ToString("C0")</div>
+                    <div style="color: var(--text-light-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Total Value</div>
+                </div>
+            </div>
+
+            <!-- Recent Cart Items Preview -->
+            <div style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.02), rgba(37, 99, 235, 0.05)); border-radius: 1.5rem; padding: 2rem; border: 1px solid rgba(255, 255, 255, 0.1);">
+                <h3 style="color: var(--text-light-primary); font-size: 1.5rem; font-weight: 600; margin-bottom: 1.5rem; text-align: center;">Recent Additions</h3>
+                <div style="display: grid; gap: 1rem;">
+                    @foreach (var item in cartItems.Take(3))
+                    {
+                        <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: rgba(255, 255, 255, 0.05); border-radius: 0.75rem; border: 1px solid rgba(255, 255, 255, 0.1);">
+                            <div style="width: 50px; height: 50px; background: var(--primary-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; flex-shrink: 0;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z"/>
+                                </svg>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; color: var(--text-light-primary); margin-bottom: 0.25rem;">@item.Property.PropertyName</div>
+                                <div style="color: var(--text-light-muted); font-size: 0.875rem;">@item.Property.PriceRange.ToString("C")</div>
+                            </div>
+                            <span style="background: @(item.Property.PropertyOption.ToLower() == "sell" ? "var(--danger-red)" : "var(--warning-orange)"); color: white; padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.75rem; font-weight: 600; text-transform: uppercase;">@item.Property.PropertyOption</span>
+                        </div>
+                    }
+                </div>
+                
+                <div style="text-align: center; margin-top: 2rem;">
+                    <a href="@Url.Action("ViewCart", "Cart", new { buyerId = ViewBag.BuyerId })" class="hero-cta-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
+                            <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>
+                        </svg>
+                        View All Cart Items
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-hide alerts after 5 seconds
+            const alerts = document.querySelectorAll('.alert-auto-hide');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    alert.style.opacity = '0';
+                    alert.style.transform = 'translateX(100%)';
+                    setTimeout(() => alert.remove(), 500);
+                }, 5000);
+            });
+        });
+    </script>
+}

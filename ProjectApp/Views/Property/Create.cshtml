@@ -1,0 +1,571 @@
+﻿@model ProjectApp.ViewModels.PropertyViewModel
+
+@{
+    ViewData["Title"] = "Add New Property";
+}
+
+<div class="auth-page">
+    <div class="auth-container">
+        <div class="auth-wrapper">
+            <div class="auth-header">
+                <h1 class="auth-title">Add New Property</h1>
+                <p class="auth-subtitle">Fill in the details to list your property</p>
+            </div>
+
+            <!-- Progress Indicator -->
+            <div class="form-progress">
+                <div class="progress-step active" data-step="1">
+                    <div class="step-circle">1</div>
+                    <span class="step-label">Basic</span>
+                </div>
+                <div class="progress-step" data-step="2">
+                    <div class="step-circle">2</div>
+                    <span class="step-label">Location</span>
+                </div>
+                <div class="progress-step" data-step="3">
+                    <div class="step-circle">3</div>
+                    <span class="step-label">Details</span>
+                </div>
+            </div>
+
+            <form asp-action="Create" enctype="multipart/form-data" method="post" class="auth-form">
+                <div asp-validation-summary="ModelOnly" class="form-error"></div>
+                
+                <!-- Hidden Fields -->
+                <input type="hidden" asp-for="SellerId" />
+                <input type="hidden" asp-for="CityId" />
+                <input type="hidden" asp-for="PropertyId" />
+                <input type="hidden" asp-for="SellerEmailId" />
+
+                <!-- Step 1: Basic Information -->
+                <div class="form-step active" data-step="1">
+                    <div class="step-header">
+                        <h3 class="step-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146z"/>
+                            </svg>
+                            Basic Property Information
+                        </h3>
+                        <p class="step-subtitle">Essential details about your property</p>
+                    </div>
+
+                    <div class="input-group">
+                        <label asp-for="PropertyName" class="input-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146z"/>
+                            </svg>
+                            Property Name
+                        </label>
+                        <input asp-for="PropertyName" class="form-input" placeholder="Enter property name" required />
+                        <span asp-validation-for="PropertyName" class="input-error"></span>
+                    </div>
+
+                    <div class="input-group">
+                        <label asp-for="PropertyType" class="input-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146z"/>
+                            </svg>
+                            Property Type
+                        </label>
+                        <input asp-for="PropertyType" class="form-input" placeholder="Apartment, Villa, House, etc." required />
+                        <span asp-validation-for="PropertyType" class="input-error"></span>
+                    </div>
+
+                    <div class="input-group">
+                        <label asp-for="PropertyOption" class="input-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v1H0V4zm0 3v5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7H0zm3 2h1a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-1a1 1 0 0 1 1-1z"/>
+                            </svg>
+                            Property Option
+                        </label>
+                        <select asp-for="PropertyOption" class="form-input" required>
+                            <option value="">-- Select an option --</option>
+                            <option value="Rent">For Rent</option>
+                            <option value="Sell">For Sale</option>
+                        </select>
+                        <span asp-validation-for="PropertyOption" class="input-error"></span>
+                    </div>
+
+                    <div class="input-group">
+                        <label asp-for="PriceRange" class="input-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M4 10.781c.148 1.667 1.513 2.85 3.591 3.003V15h1.043v-1.216c2.27-.179 3.678-1.438 3.678-3.3 0-1.59-.947-2.51-2.956-3.028l-.722-.187V3.467c1.122.11 1.879.714 2.07 1.616h1.47c-.166-1.6-1.54-2.748-3.54-2.875V1H7.591v1.233c-1.939.23-3.27 1.472-3.27 3.156 0 1.454.966 2.483 2.661 2.917l.61.162v4.031c-1.149-.17-1.94-.8-2.131-1.718H4z"/>
+                            </svg>
+                            Price Range
+                        </label>
+                        <input asp-for="PriceRange" type="number" step="0.01" class="form-input" placeholder="Enter price" required />
+                        <span asp-validation-for="PriceRange" class="input-error"></span>
+                    </div>
+
+                    <div class="input-group" id="deposit-group">
+                        <label asp-for="InitialDeposit" class="input-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/>
+                                <path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5z"/>
+                            </svg>
+                            Initial Deposit
+                        </label>
+                        <input asp-for="InitialDeposit" type="number" step="0.01" class="form-input" placeholder="Enter initial deposit (for rent)" />
+                        <span asp-validation-for="InitialDeposit" class="input-error"></span>
+                        <small class="text-muted">Only required for rental properties</small>
+                    </div>
+                </div>
+
+                <!-- Step 2: Location Information -->
+                <div class="form-step" data-step="2">
+                    <div class="step-header">
+                        <h3 class="step-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z"/>
+                            </svg>
+                            Location Information
+                        </h3>
+                        <p class="step-subtitle">Where is your property located?</p>
+                    </div>
+
+                    <div class="input-group">
+                        <label asp-for="StateId" class="input-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z"/>
+                            </svg>
+                            State
+                        </label>
+                        <select asp-for="StateId" asp-items="Model.States" class="form-input" required>
+                            <option value="">Choose State</option>
+                        </select>
+                        <span asp-validation-for="StateId" class="input-error"></span>
+                    </div>
+
+                    <div class="input-group">
+                        <label asp-for="CityName" class="input-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94z"/>
+                            </svg>
+                            City
+                        </label>
+                        <input asp-for="CityName" class="form-input" placeholder="Enter city name" required />
+                        <span asp-validation-for="CityName" class="input-error"></span>
+                    </div>
+
+                    <div class="input-group">
+                        <label asp-for="Landmark" class="input-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
+                            </svg>
+                            Nearby Landmark
+                        </label>
+                        <input asp-for="Landmark" class="form-input" placeholder="Enter nearby landmark" />
+                        <span asp-validation-for="Landmark" class="input-error"></span>
+                    </div>
+
+                    <div class="input-group">
+                        <label asp-for="Address" class="input-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
+                            </svg>
+                            Complete Address
+                        </label>
+                        <textarea asp-for="Address" class="form-input" rows="3" placeholder="Enter complete address with area, street details, etc." required></textarea>
+                        <span asp-validation-for="Address" class="input-error"></span>
+                    </div>
+                </div>
+
+                <!-- Step 3: Details & Images -->
+                <div class="form-step" data-step="3">
+                    <div class="step-header">
+                        <h3 class="step-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z"/>
+                            </svg>
+                            Property Details & Images
+                        </h3>
+                        <p class="step-subtitle">Describe your property and add images</p>
+                    </div>
+
+                    <div class="input-group">
+                        <label asp-for="Description" class="input-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z"/>
+                        </svg>
+                            Property Description
+                        </label>
+                        <textarea asp-for="Description" class="form-input" rows="4" placeholder="Describe your property - amenities, features, nearby facilities, etc." required></textarea>
+                        <span asp-validation-for="Description" class="input-error"></span>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="images" class="input-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+                                <path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093L6.002 10.5l-1.448-1.448a.5.5 0 0 0-.708 0L1.002 12V3a1 1 0 0 1 1-1h12z"/>
+                        </svg>
+                            Upload Property Images
+                        </label>
+                        <input type="file" id="images" name="images" multiple class="form-input" accept="image/*" />
+                        <small class="text-muted">Select multiple images to showcase your property</small>
+                    </div>
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="form-navigation">
+                    <button type="button" class="btn-secondary nav-btn prev-btn" style="display: none;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+                        </svg>
+                        Previous
+                    </button>
+                    
+                    <button type="button" class="btn-primary nav-btn next-btn">
+                        <span class="btn-text">Next</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="auth-footer">
+                    <p class="auth-link-text">
+                        <a asp-controller="Seller" asp-action="SellerDashboard" asp-route-sellerId="@Model.SellerId" class="auth-link">&larr; Back to Dashboard</a>
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let currentStep = 1;
+            const totalSteps = 3;
+            
+            const steps = document.querySelectorAll('.form-step');
+            const progressSteps = document.querySelectorAll('.progress-step');
+            const nextBtn = document.querySelector('.next-btn');
+            const prevBtn = document.querySelector('.prev-btn');
+            const form = document.querySelector('.auth-form');
+
+            // Initialize jQuery validation if available
+            let validator = null;
+            if (typeof $ !== 'undefined' && $.fn.validate) {
+                validator = $(form).validate({
+                    ignore: '.form-step:not(.active) :input', // Only validate visible step
+                    errorPlacement: function(error, element) {
+                        // Place error after the input element
+                        error.insertAfter(element);
+                        error.addClass('field-validation-error');
+                    },
+                    highlight: function(element, errorClass, validClass) {
+                        $(element).addClass('is-invalid').removeClass('is-valid');
+                    },
+                    unhighlight: function(element, errorClass, validClass) {
+                        $(element).removeClass('is-invalid').addClass('is-valid');
+                    },
+                    errorClass: 'field-validation-error',
+                    validClass: 'is-valid'
+                });
+            }
+
+            function updateNextButton() {
+                const btnText = nextBtn.querySelector('.btn-text');
+                const btnIcon = nextBtn.querySelector('svg');
+                
+                if (currentStep === totalSteps) {
+                    // Last step - make it a submit button
+                    nextBtn.type = 'submit';
+                    btnText.textContent = 'Create Property';
+                    btnIcon.innerHTML = `<path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z"/>`;
+                } else {
+                    // Not last step - make it a next button
+                    nextBtn.type = 'button';
+                    btnText.textContent = 'Next';
+                    btnIcon.innerHTML = `<path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>`;
+                }
+            }
+
+            function showStep(stepNumber) {
+                // Hide all steps
+                steps.forEach(step => step.classList.remove('active'));
+                progressSteps.forEach(step => step.classList.remove('active', 'completed'));
+                
+                // Show current step
+                const currentStepEl = document.querySelector(`.form-step[data-step="${stepNumber}"]`);
+                const currentProgressEl = document.querySelector(`.progress-step[data-step="${stepNumber}"]`);
+                
+                if (currentStepEl) currentStepEl.classList.add('active');
+                if (currentProgressEl) currentProgressEl.classList.add('active');
+                
+                // Mark previous steps as completed
+                for (let i = 1; i < stepNumber; i++) {
+                    const progressEl = document.querySelector(`.progress-step[data-step="${i}"]`);
+                    if (progressEl) progressEl.classList.add('completed');
+                }
+                
+                // Update navigation buttons
+                prevBtn.style.display = stepNumber === 1 ? 'none' : 'inline-flex';
+                
+                // Update the next button functionality
+                updateNextButton();
+
+                // Update jQuery validation ignore setting
+                if (validator) {
+                    validator.settings.ignore = '.form-step:not(.active) :input';
+                }
+            }
+
+            function validateStep(stepNumber) {
+                const stepEl = document.querySelector(`.form-step[data-step="${stepNumber}"]`);
+                let isValid = true;
+
+                // First, try jQuery validation if available
+                if (validator) {
+                    // Validate only the current step inputs
+                    const currentStepInputs = stepEl.querySelectorAll('input, select, textarea');
+                    const stepValid = Array.from(currentStepInputs).every(input => {
+                        return validator.element(input);
+                    });
+                    
+                    if (!stepValid) {
+                        return false;
+                    }
+                }
+
+                // Custom validation as fallback
+                const requiredInputs = stepEl.querySelectorAll('input[required], select[required], textarea[required]');
+                
+                // Clear previous custom errors
+                stepEl.querySelectorAll('.input-error').forEach(error => {
+                    if (!error.classList.contains('field-validation-error')) {
+                        error.textContent = '';
+                    }
+                });
+
+                requiredInputs.forEach(input => {
+                    const value = input.type === 'select-one' ? input.value : input.value.trim();
+                    if (!value) {
+                        // Only show custom error if no jQuery validation error exists
+                        const existingError = input.parentElement.querySelector('.field-validation-error');
+                        if (!existingError) {
+                            const errorSpan = input.parentElement.querySelector('.input-error');
+                            if (errorSpan) {
+                                errorSpan.textContent = 'This field is required.';
+                                input.classList.add('is-invalid');
+                                isValid = false;
+                            }
+                        } else {
+                            isValid = false;
+                        }
+                    }
+                });
+
+                return isValid;
+            }
+
+            function validateAllSteps() {
+                let allValid = true;
+                for (let step = 1; step <= totalSteps; step++) {
+                    if (!validateStep(step)) {
+                        allValid = false;
+                        // Navigate to first invalid step
+                        currentStep = step;
+                        showStep(step);
+                        const firstError = document.querySelector('.form-step.active .field-validation-error:not(:empty), .form-step.active .input-error:not(:empty)');
+                        if (firstError) {
+                            firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                        break;
+                    }
+                }
+                return allValid;
+            }
+
+            function handleNextButtonClick(e) {
+                if (currentStep === totalSteps) {
+                    // Last step - handle form submission
+                    e.preventDefault(); // Prevent default first
+                    
+                    // Validate current step first
+                    if (!validateStep(currentStep)) {
+                        const firstError = document.querySelector('.form-step.active .field-validation-error:not(:empty), .form-step.active .input-error:not(:empty)');
+                        if (firstError) {
+                            firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                        return false;
+                    }
+
+                    // Validate all steps
+                    if (!validateAllSteps()) {
+                        return false;
+                    }
+
+                    // Final jQuery validation check for the entire form
+                    if (validator) {
+                        // Temporarily remove ignore setting to validate all inputs
+                        const originalIgnore = validator.settings.ignore;
+                        validator.settings.ignore = '';
+                        const isFormValid = validator.form();
+                        validator.settings.ignore = originalIgnore;
+                        
+                        if (!isFormValid) {
+                            // Find first invalid step and navigate to it
+                            for (let step = 1; step <= totalSteps; step++) {
+                                const stepEl = document.querySelector(`.form-step[data-step="${step}"]`);
+                                const invalidInput = stepEl.querySelector('.field-validation-error:not(:empty)');
+                                if (invalidInput) {
+                                    currentStep = step;
+                                    showStep(step);
+                                    invalidInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                    break;
+                                }
+                            }
+                            return false;
+                        }
+                    }
+
+                    // All validation passed - disable button and show loading state
+                    nextBtn.disabled = true;
+                    const btnText = nextBtn.querySelector('.btn-text');
+                    btnText.textContent = 'Creating Property...';
+                    
+                    // Submit the form programmatically
+                    form.submit();
+                    return true;
+                } else {
+                    // Not last step - handle navigation
+                    e.preventDefault();
+                    
+                    if (validateStep(currentStep)) {
+                        currentStep++;
+                        showStep(currentStep);
+                    } else {
+                        // Scroll to first error
+                        const firstError = document.querySelector('.form-step.active .field-validation-error:not(:empty), .form-step.active .input-error:not(:empty)');
+                        if (firstError) {
+                            firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        } else {
+                            // Scroll to first invalid input
+                            const firstInvalid = document.querySelector('.form-step.active .is-invalid, .form-step.active input:invalid');
+                            if (firstInvalid) {
+                                firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                firstInvalid.focus();
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Add form submit event listener to handle programmatic submission
+            form.addEventListener('submit', function(e) {
+                // Only prevent if button is not disabled (to allow programmatic submission)
+                if (!nextBtn.disabled && currentStep === totalSteps) {
+                    e.preventDefault();
+                    handleNextButtonClick(e);
+                }
+            });
+
+            nextBtn.addEventListener('click', handleNextButtonClick);
+
+            prevBtn.addEventListener('click', function() {
+                if (currentStep > 1) {
+                    currentStep--;
+                    showStep(currentStep);
+                }
+            });
+
+            // Property option and deposit logic
+            const propertyOption = document.querySelector('[name="PropertyOption"]');
+            const initialDeposit = document.querySelector('[name="InitialDeposit"]');
+            const depositGroup = document.getElementById('deposit-group');
+
+            function updateInitialDeposit() {
+                if (propertyOption && initialDeposit && depositGroup) {
+                    if (propertyOption.value === 'Rent') {
+                        initialDeposit.disabled = false;
+                        initialDeposit.required = true;
+                        depositGroup.style.opacity = '1';
+                        depositGroup.style.pointerEvents = 'auto';
+                        
+                        // Update jQuery validation rules if available
+                        if (validator) {
+                            $(initialDeposit).rules('add', {
+                                required: true,
+                                messages: {
+                                    required: 'Initial deposit is required for rental properties.'
+                                }
+                            });
+                        }
+                    } else {
+                        initialDeposit.value = '0';
+                        initialDeposit.disabled = true;
+                        initialDeposit.required = false;
+                        depositGroup.style.opacity = '0.5';
+                        depositGroup.style.pointerEvents = 'none';
+                        
+                        // Remove jQuery validation rules if available
+                        if (validator) {
+                            $(initialDeposit).rules('remove', 'required');
+                        }
+                    }
+                }
+            }
+
+            if (propertyOption) {
+                propertyOption.addEventListener('change', updateInitialDeposit);
+                updateInitialDeposit();
+            }
+
+            // Enhanced file input feedback
+            const fileInput = document.getElementById('images');
+            if (fileInput) {
+                fileInput.addEventListener('change', function() {
+                    const fileCount = this.files.length;
+                    const helpText = this.parentElement.querySelector('.text-muted');
+                    if (helpText) {
+                        if (fileCount > 0) {
+                            helpText.innerHTML = `${fileCount} image${fileCount > 1 ? 's' : ''} selected`;
+                            helpText.style.color = 'var(--success-green)';
+                        } else {
+                            helpText.textContent = 'Select multiple images to showcase your property';
+                            helpText.style.color = '';
+                        }
+                    }
+                });
+            }
+
+            // Real-time validation for better UX
+            if (validator) {
+                // Add real-time validation for inputs
+                $(form).on('blur', 'input, select, textarea', function() {
+                    if ($(this).closest('.form-step').hasClass('active')) {
+                        validator.element(this);
+                    }
+                });
+                
+                // Clear errors when user starts typing
+                $(form).on('input', 'input, textarea', function() {
+                    if ($(this).hasClass('is-invalid')) {
+                        $(this).removeClass('is-invalid');
+                        const errorElement = $(this).next('.field-validation-error');
+                        if (errorElement.length) {
+                            errorElement.text('');
+                        }
+                    }
+                });
+
+                // Clear errors for select elements
+                $(form).on('change', 'select', function() {
+                    if ($(this).hasClass('is-invalid')) {
+                        $(this).removeClass('is-invalid');
+                        const errorElement = $(this).next('.field-validation-error');
+                        if (errorElement.length) {
+                            errorElement.text('');
+                        }
+                    }
+                });
+            }
+
+            // Initialize
+            showStep(currentStep);
+        });
+    </script>
+}

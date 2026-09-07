@@ -1,0 +1,93 @@
+﻿@{
+    ViewData["Title"] = "About Us";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to top, #09203f 0%, #537895 100%);
+            color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .display-4 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 20px;
+        }
+
+        .lead {
+            font-size: 1.25rem;
+            font-weight: 300;
+            color: #dcdcdc;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #e0e0e0;
+            margin-bottom: 20px;
+        }
+
+        .about-section {
+            background-color: #1a2b3d;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: #ffffff;
+            margin-bottom: 15px;
+        }
+
+        .section-content {
+            color: #e0e0e0;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="text-center">
+            <h1 class="display-4">About Us</h1>
+            <p class="lead">Learn more about Easy Housing Solutions.</p>
+        </div>
+        <div class="about-section">
+            <h2 class="section-title">Our Mission</h2>
+            <p class="section-content">
+                Our mission is to make finding your perfect home easier and more efficient. We offer a range of services to cater to both buyers and sellers. Our platform connects buyers with their dream homes and provides sellers with the tools they need to successfully market their properties.
+            </p>
+            <h2 class="section-title">Our Services</h2>
+            <p class="section-content">
+                - Comprehensive property listings with detailed information.<br>
+                - Advanced search filters to help you find exactly what you're looking for.<br>   
+                - Innovative tools for property valuation and market analysis.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,547 @@
+﻿@model IEnumerable<ProjectApp.Models.Property>
+
+@{
+    ViewData["Title"] = "Property Listings";
+    
+    // Helper function to build location string
+    string GetLocationString(ProjectApp.Models.Property property)
+    {
+        var locationParts = new List<string>();
+        
+        if (!string.IsNullOrWhiteSpace(property.Address))
+            locationParts.Add(property.Address.Trim());
+        
+        if (property.City != null && !string.IsNullOrWhiteSpace(property.City.CityName))
+            locationParts.Add(property.City.CityName.Trim());
+        
+        if (property.City?.State != null && !string.IsNullOrWhiteSpace(property.City.State.StateName))
+            locationParts.Add(property.City.State.StateName.Trim());
+        
+        return locationParts.Any() ? string.Join(", ", locationParts) : "Location not specified";
+    }
+    
+    // Helper function to get truncated location for display
+    string GetTruncatedLocation(string fullLocation, int maxLength = 60)
+    {
+        if (string.IsNullOrEmpty(fullLocation) || fullLocation.Length <= maxLength)
+            return fullLocation;
+        
+        // Find the last comma before the max length
+        int lastComma = fullLocation.LastIndexOf(',', Math.Min(maxLength, fullLocation.Length - 1));
+        if (lastComma > 0 && lastComma < maxLength - 3)
+        {
+            return fullLocation.Substring(0, lastComma) + "...";
+        }
+        
+        // If no comma found or it's too close to the end, just truncate
+        return fullLocation.Substring(0, maxLength - 3) + "...";
+    }
+}
+
+<!-- Alert Messages -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div style="position: fixed; top: 120px; right: 2rem; z-index: 9999; background: linear-gradient(135deg, rgba(34, 197, 94, 0.9), rgba(16, 185, 129, 0.9)); color: white; padding: 1rem 2rem; border-radius: 0.75rem; backdrop-filter: blur(10px); border: 1px solid rgba(34, 197, 94, 0.3); box-shadow: 0 8px 24px rgba(34, 197, 94, 0.3);" class="alert-auto-hide">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.061L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+            </svg>
+            <span>@TempData["SuccessMessage"]</span>
+        </div>
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div style="position: fixed; top: 120px; right: 2rem; z-index: 9999; background: linear-gradient(135deg, rgba(239, 68, 68, 0.9), rgba(220, 38, 38, 0.9)); color: white; padding: 1rem 2rem; border-radius: 0.75rem; backdrop-filter: blur(10px); border: 1px solid rgba(239, 68, 68, 0.3); box-shadow: 0 8px 24px rgba(239, 68, 68, 0.3);" class="alert-auto-hide">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+            </svg>
+            <span>@TempData["ErrorMessage"]</span>
+        </div>
+    </div>
+}
+@if (ViewBag.ErrorMessage != null)
+{
+    <div style="position: fixed; top: 170px; right: 2rem; z-index: 9999; background: linear-gradient(135deg, rgba(245, 158, 11, 0.9), rgba(217, 119, 6, 0.9)); color: white; padding: 1rem 2rem; border-radius: 0.75rem; backdrop-filter: blur(10px); border: 1px solid rgba(245, 158, 11, 0.3); box-shadow: 0 8px 24px rgba(245, 158, 11, 0.3);" class="alert-auto-hide">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+            </svg>
+            <span>@ViewBag.ErrorMessage</span>
+        </div>
+    </div>
+}
+
+<div class="hero-modern seller-dashboard">
+    <div class="container-fluid">
+        <!-- Dashboard Header -->
+        <div class="dashboard-header enhanced-cursor-effect">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <div class="seller-welcome">
+                        <h1 class="dashboard-title">@ViewData["Title"]</h1>
+                        <p class="dashboard-subtitle">Discover your perfect home from our curated collection</p>
+                        @if (Model != null && Model.Any())
+                        {
+                            <div class="results-summary">
+                                <span class="results-count">@Model.Count() properties found</span>
+                            </div>
+                        }
+                        else if (ViewBag.DatabaseError == true)
+                        {
+                            <div class="results-summary">
+                                <span class="results-count" style="color: var(--danger-red);">Unable to load properties - please try again</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="col-md-4 text-end">
+                    <div class="dashboard-actions">
+                        @if (!ViewBag.RequiresLogin)
+                        {
+                            <a href="@Url.Action("ViewCart", "Cart", new { buyerId = ViewBag.BuyerId })" class="btn btn-primary">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5zM3.14 5l1.25 5h8.22l1.25-5H3.14zM5 13a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0z"/>
+                                </svg>
+                                View Cart
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content with Left Filter and Right Properties -->
+        <div class="row">
+            <!-- Left Side: Filters with Login UI Style - Increased width -->
+            <div class="col-lg-4 col-md-5">
+                <div class="auth-page">
+                    <div class="auth-container">
+                        <div class="auth-wrapper" id="filters-wrapper" style="width: 100%; max-width: none;">
+                            <div class="auth-header">
+                                <h3 class="auth-title">Filter Properties</h3>
+                                <p class="auth-subtitle">Find your perfect home</p>
+                            </div>
+
+                            @using (Html.BeginForm("Index", "BuyerProperty", FormMethod.Get, new { @class = "auth-form" }))
+                            {
+                                @Html.Hidden("id", (object)ViewBag.BuyerId)
+
+                                <div class="input-group">
+                                    <label for="cityName" class="input-label">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                            <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.03C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94z"/>
+                                        </svg>
+                                        Location
+                                    </label>
+                                    @if (ViewBag.cityList != null)
+                                    {
+                                        @Html.DropDownList("cityName", (SelectList)ViewBag.cityList, "Choose City", new { @class = "form-input", style = "width: 100%;" })
+                                    }
+                                    else
+                                    {
+                                        <select name="cityName" class="form-input" style="width: 100%;" disabled>
+                                            <option>Cities unavailable</option>
+                                        </select>
+                                    }
+                                </div>
+
+                                <div class="input-group">
+                                    <label for="propertyType" class="input-label">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                            <path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146z"/>
+                                        </svg>
+                                        Property Type
+                                    </label>
+                                    @if (ViewBag.PropertyTypes != null)
+                                    {
+                                        @Html.DropDownList("propertyType", (SelectList)ViewBag.PropertyTypes, "Choose Property Type", new { @class = "form-input", style = "width: 100%;" })
+                                    }
+                                    else
+                                    {
+                                        <select name="propertyType" class="form-input" style="width: 100%;" disabled>
+                                            <option>Property types unavailable</option>
+                                        </select>
+                                    }
+                                </div>
+
+                                <div class="input-group">
+                                    <label for="sortOrder" class="input-label">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                            <path d="M4 10.781c.148 1.667 1.513 2.85 3.591 3.003V15h1.043v-1.216c2.27-.179 3.678-1.438 3.678-3.3 0-1.59-.947-2.51-2.956-3.028l-.722-.187V3.467c1.122.11 1.879.714 2.07 1.616h1.47c-.166-1.6-1.54-2.748-3.54-2.875V1H7.591v1.233c-1.939.23-3.27 1.472-3.27 3.156 0 1.454.966 2.483 2.661 2.917l.61.162v4.031c-1.149-.17-1.94-.8-2.131-1.718H4zm3.391-3.836c-1.043-.263-1.6-.825-1.6-1.616 0-.944.704-1.641 1.8-1.828v3.495l-.2-.05zm1.591 1.872c1.287.323 1.852.859 1.852 1.769 0 1.097-.826 1.828-2.2 1.939V8.73l.348.086z"/>
+                                        </svg>
+                                        Sort by Price
+                                    </label>
+                                    @if (ViewBag.orderPrice != null)
+                                    {
+                                        @Html.DropDownList("sortOrder", (SelectList)ViewBag.orderPrice, "Order by Price", new { @class = "form-input", style = "width: 100%;" })
+                                    }
+                                    else
+                                    {
+                                        <select name="sortOrder" class="form-input" style="width: 100%;" disabled>
+                                            <option>Sort options unavailable</option>
+                                        </select>
+                                    }
+                                </div>
+
+                                <div class="form-actions">
+                                    <button type="submit" class="btn-primary auth-submit" style="width: 100%;" @(ViewBag.DatabaseError == true ? "disabled" : "")>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                                        </svg>
+                                        Apply Filters
+                                    </button>
+                                </div>
+
+                                <div class="auth-footer">
+                                    <p class="auth-link-text">
+                                        <button type="button" onclick="clearFilters()" class="auth-link" @(ViewBag.DatabaseError == true ? "disabled" : "")>Clear All Filters</button>
+                                    </p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Properties Section with SellerDashboard Card Theme - Adjusted width -->
+            <div class="col-lg-8 col-md-7">
+                <div class="properties-section enhanced-cursor-effect">
+                    <div class="section-header">
+                        <h2 class="section-title">Available Properties</h2>
+                        @if (Model != null && Model.Any())
+                        {
+                            <div class="section-filters">
+                                <div class="filter-buttons">
+                                    <button class="filter-btn active" data-filter="all">All (@Model.Count())</button>
+                                    <button class="filter-btn" data-filter="sell">For Sale (@Model.Count(p => p.PropertyOption.ToLower() == "sell"))</button>
+                                    <button class="filter-btn" data-filter="rent">For Rent (@Model.Count(p => p.PropertyOption.ToLower() == "rent"))</button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Property Cards Container using SellerDashboard style -->
+                    <div class="property-grid">
+                        @if (Model != null && Model.Any())
+                        {
+                            @foreach (var property in Model)
+                            {
+                                var images = ViewBag.Images as List<ProjectApp.Models.Image> ?? new List<ProjectApp.Models.Image>();
+                                var image = images.FirstOrDefault(img => img.PropertyId == property.PropertyId);
+                                
+                                var fullLocation = GetLocationString(property);
+                                var isLocationLong = fullLocation.Length > 60;
+
+                                <div class="property-card enhanced-cursor-effect" 
+                                     data-type="@property.PropertyOption.ToLower()">
+                                    <div class="property-image">
+                                        @if (image != null)
+                                        {
+                                            <img src="data:image/jpeg;base64,@Convert.ToBase64String(image.ImageData)" alt="@property.PropertyName" />
+                                        }
+                                        else
+                                        {
+                                            <div class="no-image-placeholder">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-image" viewBox="0 0 16 16">
+                                                    <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
+                                                    <path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1z"/>
+                                                </svg>
+                                                <p>No Image</p>
+                                            </div>
+                                        }
+                                        <div class="image-overlay"></div>
+                                    </div>
+                                    
+                                    <div class="property-badge @property.PropertyOption.ToLower()">
+                                        @property.PropertyOption
+                                    </div>
+                                    
+                                    <div class="property-details">
+                                        <h3>@property.PropertyName</h3>
+                                        
+                                        <div class="property-meta">
+                                            <span>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
+                                                    <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z"/>
+                                                </svg>
+                                                @property.PropertyType
+                                            </span>
+                                            <span style="word-break: break-word; overflow-wrap: break-word;">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
+                                                    <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10"/>
+                                                </svg>
+                                                @if (isLocationLong)
+                                                {
+                                                    <span title="@fullLocation">@GetTruncatedLocation(fullLocation)</span>
+                                                }
+                                                else
+                                                {
+                                                    <span>@fullLocation</span>
+                                                }
+                                            </span>
+                                        </div>
+                                        
+                                        <div class="property-details-row">
+                                            <div class="property-price">
+                                                ₹@property.PriceRange.ToString("N0")
+                                            </div>
+                                            @if (property.InitialDeposit.HasValue && property.InitialDeposit.Value > 0)
+                                            {
+                                                <div class="property-deposit">
+                                                    Deposit: ₹@property.InitialDeposit.Value.ToString("N0")
+                                                </div>
+                                            }
+                                        </div>
+                                        
+                                        <div class="property-actions" style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-sm); width: 100%;">
+                                            <!-- View Details Button -->
+                                            <button type="button" 
+                                                    onclick="window.location.href='@Url.Action("Details", "SpecificProperty", new { propertyId = property.PropertyId, buyerId = ViewBag.BuyerId })'" 
+                                                    class="btn btn-info" 
+                                                    style="display: flex; align-items: center; justify-content: center; text-align: center; height: 50px; padding: var(--spacing-sm) var(--spacing-md); width: 100%; box-sizing: border-box; border: none; cursor: pointer; margin-top: 20px">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                                                    <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
+                                                    <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>
+                                                </svg>
+                                                View Details
+                                            </button>
+                                            
+                                            @if (ViewBag.RequiresLogin)
+                                            {
+                                                <button type="button" 
+                                                        onclick="window.location.href='@Url.Action("Login", "Account")'" 
+                                                        class="btn btn-info" 
+                                                        style="display: flex; align-items: center; justify-content: center; text-align: center; height: 40px; padding: var(--spacing-sm) var(--spacing-md); width: 100%; box-sizing: border-box; border: none; cursor: pointer;">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                                        <path d="M11 4a4 4 0 0 1 0 8H8a4.992 4.992 0 0 0 2-4 4.992 4.992 0 0 0-2-4h3zm-6 8a4 4 0 1 1 0-8 4 4 0 0 1 0 8zM8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0z"/>
+                                                    </svg>
+                                                    Login to Add
+                                                </button>
+                                            }
+                                            else
+                                            {
+                                                <form method="post" asp-controller="SpecificProperty" asp-action="AddToCart" asp-route-propertyId="@property.PropertyId" asp-route-buyerId="@ViewBag.BuyerId" class="action-form" style="width: 100%;">
+                                                    <button type="submit" 
+                                                            class="btn btn-info" 
+                                                            style="display: flex; align-items: center; justify-content: center; text-align: center; height: 40px; padding: var(--spacing-sm) var(--spacing-md); width: 100%; box-sizing: border-box; border: none; cursor: pointer;">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                                            <path d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5zM3.14 5l1.25 5h8.22l1.25-5H3.14zM5 13a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0z"/>
+                                                        </svg>
+                                                        Add to Cart
+                                                    </button>
+                                                </form>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="no-properties">
+                                <div class="empty-state enhanced-cursor-effect">
+                                    @if (ViewBag.DatabaseError == true)
+                                    {
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="bi bi-exclamation-triangle" viewBox="0 0 16 16">
+                                            <path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.146.146 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.163.163 0 0 1-.054.06.116.116 0 0 1-.066.017H1.146a.115.115 0 0 1-.066-.017.163.163 0 0 1-.054-.06.176.176 0 0 1 .002-.183L7.884 2.073a.147.147 0 0 1 .054-.057zm1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566z"/>
+                                            <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995z"/>
+                                        </svg>
+                                        <h3>Service Temporarily Unavailable</h3>
+                                        <p>We're experiencing technical difficulties. Please try refreshing the page or come back later.</p>
+                                        <button class="btn btn-primary" onclick="window.location.reload()">Refresh Page</button>
+                                    }
+                                    else
+                                    {
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="bi bi-house-add" viewBox="0 0 16 16">
+                                            <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z"/>
+                                            <path d="M8 4a.5.5 0 0 1 .5.5V6H10a.5.5 0 0 1 0 1H8.5v1.5a.5.5 0 0 1-1 0V7H6a.5.5 0 0 1 0-1h1.5V4.5A.5.5 0 0 1 8 4"/>
+                                        </svg>
+                                        <h3>No Properties Found</h3>
+                                        <p>We couldn't find any properties matching your criteria. Try adjusting your filters or check back later.</p>
+                                        <button class="btn btn-primary" onclick="clearFilters()">Clear Filters</button>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-hide alerts after 7 seconds
+            const alerts = document.querySelectorAll('.alert-auto-hide');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    alert.style.opacity = '0';
+                    alert.style.transform = 'translateX(100%)';
+                    setTimeout(() => alert.remove(), 500);
+                }, 7000);
+            });
+
+            // Cursor-following blur effect for filters
+            const filtersWrapper = document.getElementById('filters-wrapper');
+            
+            if (filtersWrapper) {
+                filtersWrapper.addEventListener('mousemove', function(e) {
+                    const rect = this.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    this.style.setProperty('--mouse-x', x + 'px');
+                    this.style.setProperty('--mouse-y', y + 'px');
+                });
+                
+                filtersWrapper.addEventListener('mouseenter', function() {
+                    this.style.setProperty('--show-blur', '1');
+                });
+                
+                filtersWrapper.addEventListener('mouseleave', function() {
+                    this.style.setProperty('--show-blur', '0');
+                });
+            }
+
+            // Enhanced cursor following for dashboard specific elements
+            function initDashboardCursorEffects() {
+                const enhancedElements = document.querySelectorAll('.enhanced-cursor-effect');
+                
+                enhancedElements.forEach(element => {
+                    element.style.setProperty('--cursor-x', '50%');
+                    element.style.setProperty('--cursor-y', '50%');
+                    element.style.setProperty('--show-cursor-blur', '0');
+
+                    element.addEventListener('mouseenter', function(e) {
+                        this.style.setProperty('--show-cursor-blur', '1');
+                        
+                        const rect = this.getBoundingClientRect();
+                        const x = e.clientX - rect.left;
+                        const y = e.clientY - rect.top;
+                        
+                        this.style.setProperty('--cursor-x', x + 'px');
+                        this.style.setProperty('--cursor-y', y + 'px');
+                    });
+
+                    element.addEventListener('mouseleave', function() {
+                        this.style.setProperty('--show-cursor-blur', '0');
+                    });
+
+                    element.addEventListener('mousemove', function(e) {
+                        const rect = this.getBoundingClientRect();
+                        const x = e.clientX - rect.left;
+                        const y = e.clientY - rect.top;
+                        
+                        requestAnimationFrame(() => {
+                            this.style.setProperty('--cursor-x', x + 'px');
+                            this.style.setProperty('--cursor-y', y + 'px');
+                            this.style.setProperty('--show-cursor-blur', '1');
+                        });
+                    });
+                });
+            }
+
+            // Initialize cursor effects
+            initDashboardCursorEffects();
+
+            // Filter functionality
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const properties = document.querySelectorAll('.property-card');
+
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+
+                    const filterValue = this.getAttribute('data-filter');
+
+                    properties.forEach((property, index) => {
+                        if (filterValue === 'all') {
+                            property.style.display = 'block';
+                            setTimeout(() => {
+                                property.style.opacity = '1';
+                                property.style.transform = 'translateY(0)';
+                            }, index * 50);
+                        } else {
+                            const type = property.getAttribute('data-type');
+                            
+                            if (filterValue === type) {
+                                property.style.display = 'block';
+                                setTimeout(() => {
+                                    property.style.opacity = '1';
+                                    property.style.transform = 'translateY(0)';
+                                }, index * 50);
+                            } else {
+                                property.style.opacity = '0';
+                                property.style.transform = 'translateY(20px)';
+                                setTimeout(() => {
+                                    property.style.display = 'none';
+                                }, 300);
+                            }
+                        }
+                    });
+
+                    // Reinitialize cursor effects after filter animation
+                    setTimeout(() => {
+                        initDashboardCursorEffects();
+                    }, 100);
+                });
+            });
+
+            // Property card animations
+            const propertyCards = document.querySelectorAll('.property-card');
+            propertyCards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 700 + (index * 100));
+            });
+
+            // Add loading state to cart buttons with error handling
+            const cartForms = document.querySelectorAll('.action-form');
+            cartForms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    try {
+                        const button = this.querySelector('button');
+                        if (button) {
+                            button.disabled = true;
+                            button.innerHTML = '<div class="spinner"></div>Adding...';
+                        }
+                    } catch (error) {
+                        console.log('Error updating button state:', error);
+                        // Don't prevent form submission
+                    }
+                });
+            });
+        });
+
+        // Clear filters function with error handling
+        function clearFilters() {
+            try {
+                const form = document.querySelector('.auth-form');
+                if (form) {
+                    const selects = form.querySelectorAll('select');
+                    selects.forEach(select => {
+                        if (select && !select.disabled) {
+                            select.selectedIndex = 0;
+                        }
+                    });
+                    form.submit();
+                }
+            } catch (error) {
+                console.log('Error clearing filters:', error);
+                // Fallback: reload page without parameters
+                window.location.href = window.location.pathname;
+            }
+        }
+    </script>
+}

@@ -1,0 +1,27 @@
+﻿@{
+    ViewData["Title"] = "Empty Cart";
+    var buyerId = ViewBag.BuyerId;
+}
+
+<div class="hero-modern">
+    <div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+        <div class="form w-100" style="max-width: 600px;">
+            <div class="form-header">
+                <h1>@ViewData["Title"]</h1>
+            </div>
+            
+            <div class="text-center">
+                <div class="hero-subtitle mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" viewBox="0 0 16 16" style="margin-bottom: 1rem;">
+                        <path d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5zM3.14 5l1.25 5h8.22l1.25-5H3.14zM5 13a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0z"/>
+                    </svg>
+                    <p style="font-size: 1.25rem; margin-bottom: 2rem;">You don't have any items in your cart. Start adding properties to your cart!</p>
+                </div>
+
+                <a href="@Url.Action("Index", "BuyerProperty", new { id = buyerId })" class="button-submit">
+                    Add Properties to Cart
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

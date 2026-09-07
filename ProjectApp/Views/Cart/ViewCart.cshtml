@@ -1,0 +1,609 @@
+﻿@model List<ProjectApp.Models.Cart>
+
+@{
+    ViewData["Title"] = "Shopping Cart";
+}
+
+@section Styles {
+    <style>
+        /* Cart specific styles using consistent theme variables */
+        .cart-page {
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--bg-dark-primary) 0%, var(--bg-dark-secondary) 100%);
+            padding-top: 140px;
+        }
+
+        .cart-header {
+            margin-bottom: var(--spacing-2xl);
+            text-align: center;
+        }
+
+        .page-title {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--text-light-primary);
+            margin-bottom: var(--spacing-sm);
+            background: linear-gradient(135deg, var(--text-light-primary), var(--primary-blue-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-subtitle {
+            color: var(--text-light-muted);
+            margin-bottom: 0;
+            font-size: 1.25rem;
+        }
+
+        .cart-items {
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .cart-item {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.02), rgba(37, 99, 235, 0.05));
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-xl);
+            margin-bottom: var(--spacing-lg);
+            padding: var(--spacing-xl);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cart-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(37, 99, 235, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .cart-item:hover::before {
+            left: 100%;
+        }
+
+        .cart-item:hover {
+            transform: translateY(-4px);
+            border-color: rgba(37, 99, 235, 0.3);
+            box-shadow: 0 16px 48px rgba(37, 99, 235, 0.2);
+        }
+
+        .cart-item-image {
+            position: relative;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .cart-item-image .item-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: var(--radius-lg);
+            transition: transform 0.3s ease;
+        }
+
+        .cart-item:hover .item-image {
+            transform: scale(1.05);
+        }
+
+        .item-image-placeholder {
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(255, 255, 255, 0.05));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light-muted);
+            border-radius: var(--radius-lg);
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+        }
+
+        .item-badge {
+            position: absolute;
+            top: var(--spacing-md);
+            right: var(--spacing-md);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-xl);
+            font-weight: 700;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(10px);
+        }
+
+        .item-badge.warning {
+            background: linear-gradient(135deg, var(--warning-orange), #f59e0b);
+            color: white;
+        }
+
+        .item-badge.success {
+            background: linear-gradient(135deg, var(--success-green), #059669);
+            color: white;
+        }
+
+        .cart-item-details {
+            padding-left: var(--spacing-lg);
+        }
+
+        .item-title {
+            color: var(--text-light-primary);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .item-meta {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            color: var(--text-light-secondary);
+            font-size: 1rem;
+        }
+
+        .meta-item svg {
+            color: var(--primary-blue);
+            flex-shrink: 0;
+        }
+
+        .cart-item-actions {
+            text-align: center;
+        }
+
+        .item-pricing {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .primary-price {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-light-primary);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .secondary-price {
+            color: var(--text-light-muted);
+            font-size: 1rem;
+        }
+
+        .item-actions {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+
+        .btn-secondary, .btn-danger {
+            padding: 0.875rem 1.5rem;
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            text-decoration: none;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(37, 99, 235, 0.2));
+            color: var(--text-light-primary);
+            border-color: rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.3), rgba(255, 255, 255, 0.1));
+            color: var(--text-light-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.8), rgba(220, 38, 38, 0.9));
+            color: white;
+            border-color: rgba(239, 68, 68, 0.5);
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.9), rgba(239, 68, 68, 0.8));
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(239, 68, 68, 0.4);
+        }
+
+        .cart-summary {
+            margin-top: var(--spacing-2xl);
+            padding-top: var(--spacing-2xl);
+            border-top: 2px solid rgba(37, 99, 235, 0.2);
+        }
+
+        .summary-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.02), rgba(37, 99, 235, 0.08));
+            border: 2px solid rgba(37, 99, 235, 0.2);
+            border-radius: var(--radius-xl);
+            backdrop-filter: blur(20px);
+            padding: var(--spacing-xl);
+        }
+
+        .summary-card .card-title {
+            color: var(--text-light-primary);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-lg);
+            text-align: center;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-sm) 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-light-secondary);
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+        }
+
+        .total-row {
+            margin-top: var(--spacing-sm);
+            padding-top: var(--spacing-lg);
+            border-top: 2px solid var(--primary-blue);
+            border-bottom: none;
+            font-size: 1.1rem;
+            color: var(--text-light-primary);
+        }
+
+        .continue-shopping-btn {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(37, 99, 235, 0.2));
+            color: var(--text-light-primary);
+            border: 2px solid rgba(37, 99, 235, 0.3);
+            padding: 1rem 2rem;
+            border-radius: var(--radius-xl);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .continue-shopping-btn:hover {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.3), rgba(255, 255, 255, 0.1));
+            color: var(--text-light-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.3);
+        }
+
+        /* Empty state styling */
+        .empty-state {
+            text-align: center;
+            padding: var(--spacing-3xl) var(--spacing-xl);
+        }
+
+        .empty-state-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .empty-state svg {
+            color: var(--text-light-muted);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .empty-state h3 {
+            color: var(--text-light-primary);
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .empty-state p {
+            color: var(--text-light-muted);
+            font-size: 1.125rem;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-hover));
+            color: var(--text-light-primary);
+            border: 2px solid var(--primary-blue);
+            padding: 1rem 2rem;
+            border-radius: var(--radius-xl);
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary-blue-hover), var(--primary-blue));
+            color: var(--text-light-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4);
+        }
+
+        /* Alert messages */
+        .alert {
+            padding: 1rem 1.5rem;
+            margin-bottom: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            border: 2px solid;
+            backdrop-filter: blur(10px);
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(16, 185, 129, 0.05));
+            color: var(--success-green);
+            border-color: rgba(34, 197, 94, 0.3);
+        }
+
+        .alert-danger {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.05));
+            color: #ef4444;
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+    </style>
+}
+
+<div class="cart-page">
+    <div class="container">
+        <!-- Alert Messages -->
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success">
+                @TempData["SuccessMessage"]
+            </div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger">
+                @TempData["ErrorMessage"]
+            </div>
+        }
+
+        <!-- Cart Header -->
+        <div class="cart-header">
+            <div class="row align-items-center mb-4">
+                <div class="col-md-8">
+                    <h1 class="page-title">Shopping Cart</h1>
+                    <p class="page-subtitle">
+                        @if (Model != null && Model.Any())
+                        {
+                            <span>@Model.Count() properties in your cart</span>
+                        }
+                        else
+                        {
+                            <span>Your cart is empty</span>
+                        }
+                    </p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <a class="continue-shopping-btn" asp-controller="BuyerProperty" asp-action="Index" asp-route-id="@ViewBag.buyerId">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+                        </svg>
+                        Continue Shopping
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        @if (Model != null && Model.Any())
+        {
+            <!-- Cart Items -->
+            <div class="cart-items">
+                @foreach (var item in Model)
+                {
+                    <div class="cart-item card enhanced-cursor-effect">
+                        <div class="row align-items-center">
+                            <!-- Property Image -->
+                            <div class="col-md-3">
+                                <div class="cart-item-image">
+                                    @{
+                                        var image = item.Property.Images?.FirstOrDefault();
+                                    }
+                                    @if (image != null)
+                                    {
+                                        <img src="data:image/jpeg;base64,@Convert.ToBase64String(image.ImageData)" 
+                                             alt="@item.Property.PropertyName" 
+                                             class="item-image" />
+                                    }
+                                    else
+                                    {
+                                        <div class="item-image-placeholder">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" viewBox="0 0 16 16">
+                                                <path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146z"/>
+                                            </svg>
+                                            <span>No Image</span>
+                                        </div>
+                                    }
+                                    <span class="item-badge @(item.Property.PropertyOption.ToLower() == "rent" ? "warning" : "success")">
+                                        @item.Property.PropertyOption
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Property Details -->
+                            <div class="col-md-6">
+                                <div class="cart-item-details">
+                                    <h5 class="item-title">@item.Property.PropertyName</h5>
+                                    <div class="item-meta">
+                                        <div class="meta-item">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                                                <path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146z"/>
+                                            </svg>
+                                            @item.Property.PropertyType
+                                        </div>
+                                        <div class="meta-item">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                                                <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
+                                            </svg>
+                                            @{
+                                                var locationParts = new List<string>();
+                                                if (!string.IsNullOrWhiteSpace(item.Property.Address))
+                                                    locationParts.Add(item.Property.Address.Trim());
+                                                if (item.Property.City != null && !string.IsNullOrWhiteSpace(item.Property.City.CityName))
+                                                    locationParts.Add(item.Property.City.CityName.Trim());
+                                                var location = locationParts.Any() ? string.Join(", ", locationParts) : "Location not specified";
+                                            }
+                                            @location
+                                        </div>
+                                        <div class="meta-item">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                                                <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
+                                            </svg>
+                                            Seller: @item.Property.Seller.UserName
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Price and Actions -->
+                            <div class="col-md-3">
+                                <div class="cart-item-actions">
+                                    <div class="item-pricing">
+                                        <div class="primary-price">₹@item.Property.PriceRange.ToString("N0")</div>
+                                        @if (item.Property.InitialDeposit.HasValue && item.Property.InitialDeposit.Value > 0)
+                                        {
+                                            <div class="secondary-price">+ ₹@item.Property.InitialDeposit.Value.ToString("N0") deposit</div>
+                                        }
+                                    </div>
+                                    <div class="item-actions">
+                                        <a asp-controller="SpecificProperty" 
+                                           asp-action="Details" 
+                                           asp-route-propertyId="@item.Property.PropertyId" 
+                                           asp-route-buyerId="@ViewBag.buyerId" 
+                                           class="btn-secondary">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                                <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
+                                                <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>
+                                            </svg>
+                                            View Details
+                                        </a>
+                                        <form method="post" asp-action="RemoveFromCart" asp-route-cartId="@item.CartId" asp-route-buyerId="@ViewBag.buyerId" class="d-inline">
+                                            <button type="submit" class="btn-danger">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                                                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>
+                                                    <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z"/>
+                                                </svg>
+                                                Remove
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- Cart Summary -->
+            <div class="cart-summary">
+                <div class="row">
+                    <div class="col-md-8">
+                        <!-- Empty space for alignment -->
+                    </div>
+                    <div class="col-md-4">
+                        <div class="summary-card card">
+                            <div class="card-body">
+                                <h5 class="card-title">Cart Summary</h5>
+                                <div class="summary-row">
+                                    <span>Total Properties:</span>
+                                    <span>@Model.Count()</span>
+                                </div>
+                                @{
+                                    var totalDeposit = Model.Sum(item => item.Property.InitialDeposit ?? 0);
+                                    var totalValue = Model.Sum(item => item.Property.PriceRange);
+                                }
+                                @if (totalDeposit > 0)
+                                {
+                                    <div class="summary-row">
+                                        <span>Total Deposits:</span>
+                                        <span>₹@totalDeposit.ToString("N0")</span>
+                                    </div>
+                                }
+                                <div class="summary-row total-row">
+                                    <span><strong>Total Value:</strong></span>
+                                    <span><strong>₹@totalValue.ToString("N0")</strong></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <!-- Empty Cart State -->
+            <div class="empty-state">
+                <div class="empty-state-content">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5zM3.14 5l1.25 5h8.22l1.25-5H3.14zM5 13a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0z"/>
+                    </svg>
+                    <h3>Your cart is empty</h3>
+                    <p>Browse our properties and add them to your cart to get started.</p>
+                    <a class="btn-primary" asp-controller="BuyerProperty" asp-action="Index" asp-route-id="@ViewBag.buyerId">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                        </svg>
+                        Start Shopping
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Simple fade-in animation for cart items
+            const cartItems = document.querySelectorAll('.cart-item');
+            cartItems.forEach((item, index) => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    item.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+
+            // Add loading state to remove buttons
+            const removeForms = document.querySelectorAll('form[asp-action="RemoveFromCart"]');
+            removeForms.forEach(form => {
+                form.addEventListener('submit', function() {
+                    const button = this.querySelector('button');
+                    button.disabled = true;
+                    button.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Removing...';
+                });
+            });
+
+            // Initialize enhanced cursor effects
+            if (window.EasyHousing && window.EasyHousing.initCursorEffects) {
+                window.EasyHousing.initCursorEffects();
+            }
+        });
+    </script>
+}

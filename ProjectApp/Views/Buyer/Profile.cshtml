@@ -1,0 +1,453 @@
+@model ProjectApp.ViewModels.BuyerViewModel
+
+@{
+    ViewData["Title"] = "My Profile";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/profile.css" asp-append-version="true" />
+    <style>
+        .profile-page {
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--bg-dark-primary) 0%, var(--bg-dark-secondary) 100%);
+            padding-top: 140px;
+            padding-bottom: var(--spacing-3xl);
+        }
+
+        .profile-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: var(--spacing-xl);
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .profile-title {
+            color: var(--text-light-primary);
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: var(--spacing-md);
+            background: linear-gradient(135deg, var(--text-light-primary), var(--primary-blue-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .profile-subtitle {
+            color: var(--text-light-muted);
+            font-size: 1.25rem;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(37, 99, 235, 0.1));
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            text-align: center;
+            backdrop-filter: blur(20px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(37, 99, 235, 0.3);
+            box-shadow: 0 16px 48px rgba(37, 99, 235, 0.2);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-light-primary);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .stat-label {
+            color: var(--text-light-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.875rem;
+        }
+
+        .profile-form-container {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.02), rgba(37, 99, 235, 0.05));
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-2xl);
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-form-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(37, 99, 235, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .profile-form-container:hover::before {
+            left: 100%;
+        }
+
+        .form-section-title {
+            color: var(--text-light-primary);
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-xl);
+            text-align: center;
+        }
+
+        .input-group {
+            margin-bottom: var(--spacing-xl);
+            position: relative;
+        }
+
+        .input-label {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            color: var(--text-light-secondary);
+            font-weight: 600;
+            margin-bottom: var(--spacing-sm);
+            font-size: 1rem;
+        }
+
+        .input-label svg {
+            color: var(--primary-blue);
+            flex-shrink: 0;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(37, 99, 235, 0.05));
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-lg);
+            color: var(--text-light-primary);
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(37, 99, 235, 0.08));
+        }
+
+        .form-input:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .form-input::placeholder {
+            color: var(--text-light-muted);
+        }
+
+        .btn-primary, .btn-secondary {
+            padding: 1rem 2rem;
+            border-radius: var(--radius-xl);
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            min-width: 160px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-hover));
+            color: var(--text-light-primary);
+            border-color: var(--primary-blue);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary-blue-hover), var(--primary-blue));
+            color: var(--text-light-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(37, 99, 235, 0.2));
+            color: var(--text-light-primary);
+            border-color: rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.3), rgba(255, 255, 255, 0.1));
+            color: var(--text-light-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.3);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: var(--spacing-lg);
+            justify-content: center;
+            margin-top: var(--spacing-2xl);
+        }
+
+        .alert {
+            padding: 1rem 1.5rem;
+            margin-bottom: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            border: 2px solid;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(16, 185, 129, 0.05));
+            color: var(--success-green);
+            border-color: rgba(34, 197, 94, 0.3);
+        }
+
+        .alert-danger {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.05));
+            color: #ef4444;
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .validation-error {
+            color: #ef4444;
+            font-size: 0.875rem;
+            margin-top: var(--spacing-xs);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+    </style>
+}
+
+<div class="profile-page">
+    <div class="profile-container">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <h1 class="profile-title">My Profile</h1>
+            <p class="profile-subtitle">Manage your account information and preferences</p>
+        </div>
+
+        <!-- Profile Statistics -->
+        <div class="profile-stats">
+            <div class="stat-card enhanced-cursor-effect">
+                <div class="stat-number">@ViewBag.CartCount</div>
+                <div class="stat-label">Properties in Cart</div>
+            </div>
+            <div class="stat-card enhanced-cursor-effect">
+                <div class="stat-number">@(ViewBag.AccountCreated ? "Verified" : "Pending")</div>
+                <div class="stat-label">Account Status</div>
+            </div>
+        </div>
+
+        <!-- Alert Messages -->
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.061L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                </svg>
+                @TempData["SuccessMessage"]
+            </div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+                </svg>
+                @TempData["ErrorMessage"]
+            </div>
+        }
+
+        <!-- Profile Form -->
+        <div class="profile-form-container enhanced-cursor-effect">
+            <h2 class="form-section-title">Profile Information</h2>
+            
+            <form method="post" asp-action="UpdateProfile">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <label asp-for="FirstName" class="input-label">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
+                                </svg>
+                                First Name
+                            </label>
+                            <input asp-for="FirstName" class="form-input" placeholder="Enter your first name" />
+                            <span asp-validation-for="FirstName" class="validation-error"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <label asp-for="LastName" class="input-label">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
+                                </svg>
+                                Last Name
+                            </label>
+                            <input asp-for="LastName" class="form-input" placeholder="Enter your last name" />
+                            <span asp-validation-for="LastName" class="validation-error"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <label asp-for="DateOfBirth" class="input-label">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M3.5 0a.5.5 0 0 1 .5.5V1h9V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H1a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+                                </svg>
+                                Date of Birth
+                            </label>
+                            <input asp-for="DateOfBirth" type="date" class="form-input" />
+                            <span asp-validation-for="DateOfBirth" class="validation-error"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <label asp-for="PhoneNo" class="input-label">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M3.654 1.328a.678.678 0 0 1 1.015-.063l2.29 2.29c.329.329.445.81.293 1.234l-.547 1.64a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511z"/>
+                                </svg>
+                                Phone Number
+                            </label>
+                            <input asp-for="PhoneNo" class="form-input" placeholder="Enter your phone number" maxlength="10" />
+                            <span asp-validation-for="PhoneNo" class="validation-error"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label asp-for="EmailId" class="input-label">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z"/>
+                        </svg>
+                        Email Address
+                    </label>
+                    <input asp-for="EmailId" class="form-input" readonly disabled />
+                    <small style="color: var(--text-light-muted); font-size: 0.875rem; margin-top: var(--spacing-xs); display: block;">
+                        Email address cannot be changed. Contact support if needed.
+                    </small>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022Z"/>
+                        </svg>
+                        Update Profile
+                    </button>
+                    <a asp-action="BuyerDashboard" asp-route-buyerId="@ViewBag.BuyerId" class="btn-secondary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+                        </svg>
+                        Back to Dashboard
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize enhanced cursor effects
+            if (window.EasyHousing && window.EasyHousing.initCursorEffects) {
+                window.EasyHousing.initCursorEffects();
+            }
+
+            // Form animations
+            const formContainer = document.querySelector('.profile-form-container');
+            if (formContainer) {
+                formContainer.style.opacity = '0';
+                formContainer.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    formContainer.style.transition = 'opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+                    formContainer.style.opacity = '1';
+                    formContainer.style.transform = 'translateY(0)';
+                }, 200);
+            }
+
+            // Staggered animation for stat cards
+            const statCards = document.querySelectorAll('.stat-card');
+            statCards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 400 + (index * 200));
+            });
+
+            // Auto-hide alerts after 5 seconds
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    alert.style.opacity = '0';
+                    alert.style.transform = 'translateX(100%)';
+                    setTimeout(() => alert.remove(), 500);
+                }, 5000);
+            });
+
+            // Phone number validation
+            const phoneInput = document.querySelector('input[name="PhoneNo"]');
+            if (phoneInput) {
+                phoneInput.addEventListener('input', function() {
+                    this.value = this.value.replace(/\D/g, ''); // Remove non-digits
+                    if (this.value.length > 10) {
+                        this.value = this.value.slice(0, 10); // Limit to 10 digits
+                    }
+                });
+            }
+
+            // Form submission loading state
+            const form = document.querySelector('form[method="post"]');
+            if (form) {
+                form.addEventListener('submit', function() {
+                    const submitButton = this.querySelector('button[type="submit"]');
+                    if (submitButton) {
+                        submitButton.disabled = true;
+                        submitButton.innerHTML = '<div class="spinner"></div>Updating...';
+                    }
+                });
+            }
+        });
+    </script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,151 @@
+﻿@model ProjectApp.ViewModels.BuyerViewModel
+@{
+    ViewData["Title"] = "Buyer Details";
+}
+
+<div class="auth-page">
+    <div class="auth-container">
+        <div class="auth-wrapper">
+            <div class="auth-header">
+                <h1 class="auth-title">Complete Your Profile</h1>
+                <p class="auth-subtitle">Enter your details to get started with property browsing</p>
+            </div>
+
+            <form asp-action="CreateBuyerDetails" method="post" class="auth-form">
+                <div class="input-group">
+                    <label asp-for="FirstName" class="input-label">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
+                        </svg>
+                        First Name
+                    </label>
+                    <input asp-for="FirstName" class="form-input" placeholder="Enter your first name" />
+                    <span asp-validation-for="FirstName" class="input-error"></span>
+                </div>
+
+                <div class="input-group">
+                    <label asp-for="LastName" class="input-label">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
+                        </svg>
+                        Last Name
+                    </label>
+                    <input asp-for="LastName" class="form-input" placeholder="Enter your last name" />
+                    <span asp-validation-for="LastName" class="input-error"></span>
+                </div>
+
+                <div class="input-group">
+                    <label asp-for="DateOfBirth" class="input-label">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+                        </svg>
+                        Date of Birth
+                    </label>
+                    <input asp-for="DateOfBirth" type="date" class="form-input" />
+                    <span asp-validation-for="DateOfBirth" class="input-error"></span>
+                </div>
+
+                <div class="input-group">
+                    <label asp-for="PhoneNo" class="input-label">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M3.654 1.328a.678.678 0 0 1 1.015-.063l2.29 2.29c.329.329.445.81.293 1.234l-.547 1.64a.678.678 0 0 1-.746.468l-1.745-.349a11.72 11.72 0 0 0 5.482 5.482l-.349-1.745a.678.678 0 0 1 .468-.746l1.64-.547c.424-.152.905-.036 1.234.293l2.29 2.29a.678.678 0 0 1-.063 1.015l-2.29 2.29a1.745 1.745 0 0 1-1.234.293l-1.64-.547a.678.678 0 0 1-.468-.746l.349-1.745a11.72 11.72 0 0 0-5.482-5.482l1.745.349a.678.678 0 0 1 .746-.468l.547-1.64a1.745 1.745 0 0 1 .293-1.234z"/>
+                        </svg>
+                        Phone Number
+                    </label>
+                    <input asp-for="PhoneNo" class="form-input" placeholder="Enter your phone number" maxlength="10" />
+                    <span asp-validation-for="PhoneNo" class="input-error"></span>
+                </div>
+
+                <div class="input-group">
+                    <label asp-for="EmailId" class="input-label">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z"/>
+                        </svg>
+                        Email Address
+                    </label>
+                    <input asp-for="EmailId" class="form-input" readonly disabled />
+                    <small style="color: var(--text-light-muted); font-size: 0.875rem; margin-top: var(--spacing-xs); display: block;">
+                        Email address cannot be changed.
+                    </small>
+                </div>
+
+                <!-- Simple Error Display -->
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="form-error" id="error-message">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                        </svg>
+                        <div>
+                            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                            {
+                                <p>@error.ErrorMessage</p>
+                            }
+                        </div>
+                    </div>
+                }
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary auth-submit" id="submitBtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z"/>
+                        </svg>
+                        <span class="btn-text">Complete Registration</span>
+                    </button>
+                </div>
+
+                <div class="auth-footer">
+                    <p class="auth-link-text">
+                        Need help? <a href="mailto:support@easyhousing.com" class="auth-link">Contact Support</a>
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Simple error hiding on input
+            const errorMsg = document.getElementById('error-message');
+            const inputs = document.querySelectorAll('.form-input');
+
+            function hideError() {
+                if (errorMsg) {
+                    errorMsg.style.display = 'none';
+                }
+            }
+
+            inputs.forEach(input => {
+                input.addEventListener('input', hideError);
+            });
+
+            // Phone number validation
+            const phoneInput = document.querySelector('input[name="PhoneNo"]');
+            if (phoneInput) {
+                phoneInput.addEventListener('input', function() {
+                    this.value = this.value.replace(/\D/g, ''); // Remove non-digits
+                    if (this.value.length > 10) {
+                        this.value = this.value.slice(0, 10); // Limit to 10 digits
+                    }
+                });
+            }
+
+            // Simple form submission handling
+            const form = document.querySelector('.auth-form');
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = submitBtn.querySelector('.btn-text');
+            
+            if (form && submitBtn) {
+                form.addEventListener('submit', function() {
+                    submitBtn.disabled = true;
+                    if (btnText) {
+                        btnText.textContent = 'Processing...';
+                    }
+                });
+            }
+        });
+    </script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

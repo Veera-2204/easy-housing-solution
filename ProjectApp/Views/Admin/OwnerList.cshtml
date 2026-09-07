@@ -1,0 +1,64 @@
+﻿@{
+    ViewData["Title"] = "Seller's List";
+}
+
+<div class="admin-page">
+    <div class="admin-container">
+        <h1 class="admin-title">Sellers List</h1>
+        <p class="admin-subtitle">Manage and view all registered sellers</p>
+
+        <!-- Navigation Button -->
+        <div class="admin-button-group align-right">
+            <a href="@Url.Action("AdminDashboard", "Admin")" class="admin-btn admin-btn-secondary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+                </svg>
+                Go to Dashboard
+            </a>
+        </div>
+
+        <!-- Sellers Table -->
+        <div class="admin-table-container">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>User Name</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Date of Birth</th>
+                        <th>Phone No</th>
+                        <th>Address</th>
+                        <th>Email Id</th>
+                        <th>State</th>
+                        <th>City</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var seller in Model)
+                    {
+                        <tr>
+                            <td>@seller.UserName</td>
+                            <td>@seller.FirstName</td>
+                            <td>@seller.LastName</td>
+                            <td>@seller.DateOfBirth.ToShortDateString()</td>
+                            <td>@seller.PhoneNo</td>
+                            <td>@seller.Address</td>
+                            <td>@seller.EmailId</td>
+                            <td>@seller.State.StateName</td>
+                            <td>@seller.City.CityName</td>
+                            <td>
+                                <a href="@Url.Action("PropertiesBySeller", "Admin", new { sellerId = seller.SellerId })" class="admin-btn admin-btn-primary">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146z"/>
+                                    </svg>
+                                    View Properties
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

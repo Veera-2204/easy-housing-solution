@@ -1,0 +1,369 @@
+﻿@model ProjectApp.ViewModels.PropertyDetailsViewModel
+
+@{
+    ViewData["Title"] = $"Property Details - {Model.PropertyName}";
+}
+
+<div class="admin-page">
+    <div class="admin-container">
+        <!-- Header Section -->
+        <div class="admin-details-header">
+            <div class="admin-details-title-section">
+                <h1 class="admin-title">@Model.PropertyName</h1>
+                <div class="admin-details-badges">
+                    @if (Model.IsActive)
+                    {
+                        <span class="status-verified">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z"/>
+                            </svg>
+                            Active Property
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="status-not-verified">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
+                        </svg>
+                        Inactive Property
+                    </span>
+                    }
+                    <span class="property-type-badge">@Model.PropertyType</span>
+                    <span class="property-option-badge">@Model.PropertyOption</span>
+                </div>
+            </div>
+            
+            <!-- Navigation Buttons -->
+            <div class="admin-button-group align-right">
+                <a href="@Url.Action("ViewProperties", "Admin")" class="admin-btn admin-btn-secondary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+                    </svg>
+                    Back to Properties
+                </a>
+                <a href="@Url.Action("AdminDashboard", "Admin")" class="admin-btn admin-btn-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
+                    </svg>
+                    Dashboard
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="admin-details-grid">
+            <!-- Property Information Card -->
+            <div class="admin-details-card">
+                <div class="admin-details-card-header">
+                    <h3>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146z"/>
+                        </svg>
+                        Property Information
+                    </h3>
+                </div>
+                <div class="admin-details-card-content">
+                    <div class="admin-details-info-grid">
+                        <div class="admin-details-info-item">
+                            <span class="admin-details-label">Property Type</span>
+                            <span class="admin-details-value">@Model.PropertyType</span>
+                        </div>
+                        <div class="admin-details-info-item">
+                            <span class="admin-details-label">Option</span>
+                            <span class="admin-details-value">@Model.PropertyOption</span>
+                        </div>
+                        <div class="admin-details-info-item">
+                            <span class="admin-details-label">Price</span>
+                            <span class="admin-details-value price-highlight">@Model.Price.ToString("C")</span>
+                        </div>
+                        <div class="admin-details-info-item">
+                            <span class="admin-details-label">Initial Deposit</span>
+                            <span class="admin-details-value">@(Model.InitialDeposit.HasValue ? Model.InitialDeposit.Value.ToString("C") : "Not specified")</span>
+                        </div>
+                    </div>
+                    
+                    @if (!string.IsNullOrEmpty(Model.Description))
+                    {
+                        <div class="admin-details-description">
+                            <h4>Description</h4>
+                            <p>@Model.Description</p>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Location Information Card -->
+            <div class="admin-details-card">
+                <div class="admin-details-card-header">
+                    <h3>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
+                        </svg>
+                        Location Details
+                    </h3>
+                </div>
+                <div class="admin-details-card-content">
+                    <div class="admin-details-info-grid">
+                        <div class="admin-details-info-item full-width">
+                            <span class="admin-details-label">Address</span>
+                            <span class="admin-details-value">@Model.Address</span>
+                        </div>
+                        @if (!string.IsNullOrEmpty(Model.Landmark))
+                        {
+                            <div class="admin-details-info-item">
+                                <span class="admin-details-label">Landmark</span>
+                                <span class="admin-details-value">@Model.Landmark</span>
+                            </div>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.CityName))
+                        {
+                            <div class="admin-details-info-item">
+                                <span class="admin-details-label">City</span>
+                                <span class="admin-details-value">@Model.CityName</span>
+                            </div>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.StateName))
+                        {
+                            <div class="admin-details-info-item">
+                                <span class="admin-details-label">State</span>
+                                <span class="admin-details-value">@Model.StateName</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seller Information Card -->
+            <div class="admin-details-card seller-card">
+                <div class="admin-details-card-header">
+                    <h3>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
+                        </svg>
+                        Seller Information
+                    </h3>
+                    <button type="button" class="admin-btn admin-btn-sm admin-btn-outline" onclick="toggleSellerDetails()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16" class="toggle-icon">
+                            <path d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                        </svg>
+                        <span class="toggle-text">Show Details</span>
+                    </button>
+                </div>
+                <div id="sellerDetails" class="admin-details-card-content seller-details-content">
+                    @if (!string.IsNullOrEmpty(Model.SellerName))
+                    {
+                        <div class="admin-details-info-grid">
+                            <div class="admin-details-info-item">
+                                <span class="admin-details-label">Name</span>
+                                <span class="admin-details-value">@Model.SellerName</span>
+                            </div>
+                            @if (!string.IsNullOrEmpty(Model.SellerContactInfo))
+                            {
+                                <div class="admin-details-info-item">
+                                    <span class="admin-details-label">Contact</span>
+                                    <span class="admin-details-value">
+                                        <a href="tel:@Model.SellerContactInfo" class="contact-link">@Model.SellerContactInfo</a>
+                                    </span>
+                                </div>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.SellerEmailId))
+                            {
+                                <div class="admin-details-info-item">
+                                    <span class="admin-details-label">Email</span>
+                                    <span class="admin-details-value">
+                                        <a href="mailto:@Model.SellerEmailId" class="contact-link">@Model.SellerEmailId</a>
+                                    </span>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="admin-details-empty-state">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7Zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
+                                <path fill-rule="evenodd" d="M5.216 14A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216Z"/>
+                                <path d="M4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"/>
+                            </svg>
+                            <p>No seller details available for this property.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Property Images Section -->
+        <div class="admin-details-images-section">
+            <div class="admin-details-card">
+                <div class="admin-details-card-header">
+                    <h3>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
+                            <path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1z"/>
+                        </svg>
+                        Property Images
+                        @if (Model.Images.Any())
+                        {
+                            <span class="image-count">(@Model.Images.Count() @(Model.Images.Count() == 1 ? "image" : "images"))</span>
+                        }
+                    </h3>
+                </div>
+                <div class="admin-details-card-content">
+                    @if (Model.Images.Any())
+                    {
+                        <div class="admin-property-images-enhanced">
+                            @foreach (var image in Model.Images.Select((img, index) => new { Image = img, Index = index }))
+                            {
+                                var base64Image = Convert.ToBase64String(image.Image.ImageData);
+                                <div class="admin-image-item" onclick="openImageModal('@base64Image', @image.Index)">
+                                    <img src="data:image/jpeg;base64,@base64Image" alt="Property Image @(image.Index + 1)" loading="lazy" />
+                                    <div class="admin-image-overlay">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                                            <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
+                                            <path d="M1.5 2A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2zm13 1a.5.5 0 0 1 .5.5v6l-3.775-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.5 12.5v.5a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5z"/>
+                                        </svg>
+                                        <span>View Full Size</span>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="admin-details-empty-state">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
+                                <path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1z"/>
+                            </svg>
+                            <h4>No Images Available</h4>
+                            <p>This property doesn't have any images uploaded yet.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Image Modal -->
+<div id="imageModal" class="admin-image-modal" onclick="closeImageModal()">
+    <div class="admin-image-modal-content" onclick="event.stopPropagation()">
+        <button class="admin-image-modal-close" onclick="closeImageModal()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
+            </svg>
+        </button>
+        <img id="modalImage" src="" alt="Property Image" />
+        <div class="admin-image-modal-controls">
+            <button class="admin-btn admin-btn-secondary" onclick="previousImage()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+                </svg>
+                Previous
+            </button>
+            <span id="imageCounter">1 / 1</span>
+            <button class="admin-btn admin-btn-secondary" onclick="nextImage()">
+                Next
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Seller details toggle functionality
+        function toggleSellerDetails() {
+            var sellerDetailsDiv = document.getElementById("sellerDetails");
+            var button = document.querySelector('button[onclick="toggleSellerDetails()"]');
+            var toggleIcon = button.querySelector('.toggle-icon path');
+            var toggleText = button.querySelector('.toggle-text');
+            
+            if (sellerDetailsDiv.classList.contains('show')) {
+                sellerDetailsDiv.classList.remove('show');
+                toggleIcon.setAttribute('d', 'M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z');
+                toggleText.textContent = 'Show Details';
+            } else {
+                sellerDetailsDiv.classList.add('show');
+                toggleIcon.setAttribute('d', 'M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z');
+                toggleText.textContent = 'Hide Details';
+            }
+        }
+
+        // Image modal functionality
+        let currentImageIndex = 0;
+        let imageData = [];
+
+        function openImageModal(base64Image, index) {
+            const modal = document.getElementById('imageModal');
+            const modalImage = document.getElementById('modalImage');
+            const imageCounter = document.getElementById('imageCounter');
+            
+            // Populate image data array
+            imageData = @Html.Raw(Json.Serialize(Model.Images.Select((img, idx) => new { 
+                base64 = Convert.ToBase64String(img.ImageData), 
+                index = idx 
+            }).ToArray()));
+            
+            currentImageIndex = index;
+            modalImage.src = `data:image/jpeg;base64,${base64Image}`;
+            imageCounter.textContent = `${currentImageIndex + 1} / ${imageData.length}`;
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeImageModal() {
+            const modal = document.getElementById('imageModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function previousImage() {
+            if (imageData.length === 0) return;
+            currentImageIndex = (currentImageIndex - 1 + imageData.length) % imageData.length;
+            updateModalImage();
+        }
+
+        function nextImage() {
+            if (imageData.length === 0) return;
+            currentImageIndex = (currentImageIndex + 1) % imageData.length;
+            updateModalImage();
+        }
+
+        function updateModalImage() {
+            const modalImage = document.getElementById('modalImage');
+            const imageCounter = document.getElementById('imageCounter');
+            
+            modalImage.src = `data:image/jpeg;base64,${imageData[currentImageIndex].base64}`;
+            imageCounter.textContent = `${currentImageIndex + 1} / ${imageData.length}`;
+        }
+
+        // Keyboard navigation for modal
+        document.addEventListener('keydown', function(event) {
+            const modal = document.getElementById('imageModal');
+            if (modal.style.display === 'flex') {
+                switch(event.key) {
+                    case 'Escape':
+                        closeImageModal();
+                        break;
+                    case 'ArrowLeft':
+                        previousImage();
+                        break;
+                    case 'ArrowRight':
+                        nextImage();
+                        break;
+                }
+            }
+        });
+
+        // Initialize enhanced cursor effects
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.EasyHousing && window.EasyHousing.initCursorEffects) {
+                window.EasyHousing.initCursorEffects();
+            }
+        });
+    </script>
+}
