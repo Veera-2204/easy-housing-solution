@@ -1,0 +1,378 @@
+/* Base HTML and Body Styles */
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+    position: relative;
+    min-height: 100%;
+}
+
+@media (max-width: 768px) {
+    html {
+        font-size: 14px;
+    }
+}
+
+/* Global Background applied to all pages - Using hero-modern background */
+body.app-body {
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    
+    /* Apply hero-modern background as the default */
+    background: linear-gradient(135deg, rgba(24, 26, 32, 0.98) 0%, rgba(35, 39, 47, 0.98) 100%);
+    color: var(--text-light-secondary);
+    
+    /* Background pattern overlay matching hero */
+    position: relative;
+    
+    /* Global cursor following variables */
+    --cursor-x: 50%;
+    --cursor-y: 50%;
+    --show-cursor-blur: 0;
+}
+
+body.app-body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 20%, rgba(37, 99, 235, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(37, 99, 235, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 60% 40%, rgba(37, 99, 235, 0.08) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: -1;
+    animation: backgroundPulse 6s ease-in-out infinite;
+}
+
+/* Global Cursor Following Blur Effect */
+body.app-body::after {
+    content: '';
+    position: fixed;
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, rgba(37, 99, 235, 0.06) 0%, rgba(37, 99, 235, 0.03) 40%, transparent 70%);
+    border-radius: 50%;
+    filter: blur(20px);
+    opacity: var(--show-cursor-blur, 0);
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+    z-index: -1;
+    /* Position the blur effect at cursor location */
+    left: calc(var(--cursor-x, 50%) - 60px);
+    top: calc(var(--cursor-y, 50%) - 60px);
+    transform: translate3d(0, 0, 0); /* Hardware acceleration */
+}
+
+@keyframes backgroundPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+}
+
+/* Enhanced cursor effect for interactive elements */
+.enhanced-cursor-effect {
+    position: relative;
+    --cursor-x: 50%;
+    --cursor-y: 50%;
+    --show-cursor-blur: 0;
+}
+
+.enhanced-cursor-effect::before {
+    content: '';
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, rgba(37, 99, 235, 0.08) 0%, rgba(37, 99, 235, 0.04) 40%, transparent 70%);
+    border-radius: 50%;
+    filter: blur(25px);
+    opacity: var(--show-cursor-blur, 0);
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+    z-index: 1;
+    left: calc(var(--cursor-x, 50%) - 75px);
+    top: calc(var(--cursor-y, 50%) - 75px);
+    transform: translate3d(0, 0, 0);
+}
+
+/* Apply enhanced effect to specific containers */
+.property-card,
+.auth-wrapper,
+.hero-content,
+.card,
+.form,
+.dashboard-card {
+    position: relative;
+    --cursor-x: 50%;
+    --cursor-y: 50%;
+    --show-cursor-blur: 0;
+}
+
+.property-card::before,
+.auth-wrapper::before,
+.hero-content::before,
+.card::before,
+.form::before,
+.dashboard-card::before {
+    content: '';
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, rgba(37, 99, 235, 0.08) 0%, rgba(37, 99, 235, 0.04) 40%, transparent 70%);
+    border-radius: 50%;
+    filter: blur(25px);
+    opacity: var(--show-cursor-blur, 0);
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+    z-index: 1;
+    left: calc(var(--cursor-x, 50%) - 75px);
+    top: calc(var(--cursor-y, 50%) - 75px);
+    transform: translate3d(0, 0, 0);
+}
+
+/* Fixed Header Styles */
+.app-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1030;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Enhanced scrolling effect */
+.app-header.scrolled {
+    transform: translateY(0);
+}
+
+/* Main Content with proper spacing and matching background */
+.app-main {
+    flex: 1;
+    min-height: calc(100vh - 180px);
+    position: relative;
+    /* Ensure main uses the same background as body */
+    background: transparent;
+    /* No additional padding-top since we're using transparent background */
+    padding-top: 140px;
+    padding-bottom: 40px;
+}
+
+/* Footer Styles */
+.app-footer {
+    margin-top: auto;
+    position: relative;
+    z-index: 1020;
+}
+
+/* Auth pages need full height without extra padding */
+.auth-page {
+    min-height: calc(100vh - 140px); /* Subtract floating header height */
+    padding-top: 0;
+    margin-top: 0;
+    background: transparent; /* Ensure same background */
+}
+
+/* Form pages need full height without extra padding */
+.form-page {
+    min-height: calc(100vh - 140px); /* Subtract floating header height */
+    padding-top: 0;
+    margin-top: 0;
+    background: transparent; /* Ensure same background */
+}
+
+/* Listing pages need proper spacing */
+.listing-page {
+    min-height: calc(100vh - 180px);
+    padding-top: 0;
+    background: transparent; /* Ensure same background */
+}
+
+/* Hero section adjustments for non-home pages */
+.hero-modern:not(.home-hero) {
+    min-height: calc(100vh - 140px); /* Subtract floating header height */
+    padding-top: var(--spacing-xl);
+    /* Use same background as body since they're now identical */
+    background: transparent;
+}
+
+/* Home hero uses the same background as body now */
+.hero-modern.home-hero {
+    min-height: 100vh;
+    /* Use same background as body since they're now identical */
+    background: transparent;
+}
+
+/* Focus States */
+.btn:focus, 
+.btn:active:focus, 
+.btn-link.nav-link:focus, 
+.form-control:focus, 
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+/* Utility Classes */
+.text-muted {
+    color: var(--text-dark-muted) !important;
+}
+
+.text-end {
+    text-align: right !important;
+}
+
+.gap-3 {
+    gap: var(--spacing-md) !important;
+}
+
+/* Container adjustments */
+.container-fluid {
+    padding-left: var(--spacing-lg);
+    padding-right: var(--spacing-lg);
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Enhanced smooth scrolling */
+@media (prefers-reduced-motion: no-preference) {
+    html {
+        scroll-behavior: smooth;
+    }
+    
+    * {
+        scroll-behavior: smooth;
+    }
+}
+
+/* Animation Keyframes */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInFromLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInFromRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Page transition animations */
+.page-content {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+/* Responsive adjustments */
+@media (max-width: 991px) {
+    .app-main {
+        padding-top: 120px; /* Smaller header margin on tablet */
+    }
+    
+    .auth-page,
+    .form-page {
+        min-height: calc(100vh - 120px);
+    }
+    
+    .hero-modern:not(.home-hero) {
+        min-height: calc(100vh - 120px);
+    }
+    
+    .hero-modern.home-hero {
+        padding-top: 100px;
+    }
+}
+
+@media (max-width: 768px) {
+    .app-main {
+        padding-top: 110px; /* Smaller header margin on mobile */
+    }
+    
+    .auth-page,
+    .form-page {
+        min-height: calc(100vh - 110px);
+    }
+    
+    .hero-modern:not(.home-hero) {
+        min-height: calc(100vh - 110px);
+    }
+    
+    .hero-modern.home-hero {
+        padding-top: 90px;
+    }
+    
+    .container-fluid {
+        padding-left: var(--spacing-md);
+        padding-right: var(--spacing-md);
+    }
+}
+
+/* Performance optimizations */
+.app-header,
+.app-footer,
+.nav-link,
+.footer-social a,
+.dropdown-item {
+    will-change: transform;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+    
+    body.app-body::before,
+    body.app-body::after {
+        animation: none !important;
+    }
+    
+    .enhanced-cursor-effect::before,
+    .property-card::before,
+    .auth-wrapper::before,
+    .hero-content::before,
+    .card::before,
+    .form::before,
+    .dashboard-card::before {
+        display: none !important;
+    }
+}

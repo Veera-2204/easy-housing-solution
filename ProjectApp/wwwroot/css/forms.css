@@ -1,0 +1,534 @@
+/* Modern Auth Form Styles - Updated with global cursor effects */
+
+/* Auth Page Layout */
+.auth-page {
+    min-height: calc(100vh - 140px); /* Account for floating header */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-2xl) var(--spacing-lg);
+    background: transparent; /* Inherit global background */
+}
+
+.auth-container {
+    width: 100%;
+    max-width: 480px;
+    animation: fadeInUp 0.8s ease-out;
+}
+
+.auth-wrapper {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.02), rgba(37, 99, 235, 0.05));
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-2xl);
+    padding: var(--spacing-2xl);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(20px);
+    position: relative;
+    overflow: hidden;
+    /* Cursor effect handled globally */
+}
+
+/* Auth Header */
+.auth-header {
+    text-align: center;
+    margin-bottom: var(--spacing-2xl);
+    position: relative;
+    z-index: 2;
+}
+
+.auth-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--text-light-primary);
+    margin-bottom: var(--spacing-sm);
+    line-height: 1.2;
+    background: linear-gradient(135deg, var(--text-light-primary), var(--primary-blue-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.auth-subtitle {
+    color: var(--text-light-muted);
+    font-size: 1.125rem;
+    margin: 0;
+    font-weight: 500;
+}
+
+/* Auth Form */
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    position: relative;
+    z-index: 2;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.input-label {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-weight: 600;
+    color: var(--text-light-secondary);
+    font-size: 0.875rem;
+    margin-bottom: var(--spacing-xs);
+}
+
+.input-label svg {
+    width: 16px;
+    height: 16px;
+    color: var(--primary-blue-light);
+    filter: drop-shadow(0 2px 4px rgba(37, 99, 235, 0.3));
+}
+
+/* Enhanced Form Inputs - 10px border radius with Bootstrap override */
+.form-input,
+.form-select,
+.form-textarea,
+input.form-input,
+select.form-select,
+textarea.form-textarea,
+.auth-form input,
+.auth-form select,
+.auth-form textarea,
+.auth-wrapper input,
+.auth-wrapper select,
+.auth-wrapper textarea {
+    width: 100% !important;
+    padding: 1rem 1.25rem !important;
+    border: 2px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 10px !important; /* 10px as requested */
+    font-size: 1rem !important;
+    color: var(--text-light-primary) !important;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(37, 99, 235, 0.1)) !important;
+    backdrop-filter: blur(10px) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    position: relative !important;
+    font-weight: 500 !important;
+    box-sizing: border-box !important;
+    /* Ensure corners are properly rounded - override Bootstrap */
+    -webkit-border-radius: 10px !important;
+    -moz-border-radius: 10px !important;
+    overflow: hidden !important;
+}
+
+/* Focus states with Bootstrap override */
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus,
+input.form-input:focus,
+select.form-select:focus,
+textarea.form-textarea:focus,
+.auth-form input:focus,
+.auth-form select:focus,
+.auth-form textarea:focus,
+.auth-wrapper input:focus,
+.auth-wrapper select:focus,
+.auth-wrapper textarea:focus {
+    outline: none !important;
+    border-color: rgba(37, 99, 235, 0.6) !important;
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(255, 255, 255, 0.05)) !important;
+    box-shadow: 0 8px 24px rgba(37, 99, 235, 0.3) !important;
+    transform: translateY(-2px) !important;
+    border-radius: 10px !important;
+    -webkit-border-radius: 10px !important;
+    -moz-border-radius: 10px !important;
+}
+
+/* Placeholder styles with Bootstrap override */
+.form-input::placeholder,
+.form-textarea::placeholder,
+input.form-input::placeholder,
+textarea.form-textarea::placeholder,
+.auth-form input::placeholder,
+.auth-form textarea::placeholder,
+.auth-wrapper input::placeholder,
+.auth-wrapper textarea::placeholder {
+    color: var(--text-light-muted) !important;
+    opacity: 0.8 !important;
+}
+
+.form-select {
+    cursor: pointer !important;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' width='4' height='5' viewBox='0 0 4 5'><path fill='%23ffffff' d='M2 0L0 2h4zm0 5L0 3h4z'/></svg>") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 1rem center !important;
+    background-size: 12px !important;
+    padding-right: 3rem !important;
+}
+
+/* Bootstrap form-control override */
+.form-control,
+input.form-control,
+select.form-control,
+textarea.form-control {
+    border-radius: 10px !important;
+    -webkit-border-radius: 10px !important;
+    -moz-border-radius: 10px !important;
+}
+
+.form-control:focus,
+input.form-control:focus,
+select.form-control:focus,
+textarea.form-control:focus {
+    border-radius: 10px !important;
+    -webkit-border-radius: 10px !important;
+    -moz-border-radius: 10px !important;
+    box-shadow: 0 8px 24px rgba(37, 99, 235, 0.3) !important;
+}
+
+/* Input Error States */
+.input-error {
+    color: var(--error-red);
+    font-size: 0.875rem;
+    margin-top: var(--spacing-xs);
+    font-weight: 500;
+}
+
+/* Form Error Display - 10px border radius */
+.form-error {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05));
+    border: 2px solid rgba(239, 68, 68, 0.3);
+    border-radius: 10px !important; /* 10px as requested */
+    color: var(--error-red);
+    backdrop-filter: blur(10px);
+    animation: errorSlideIn 0.3s ease;
+    box-sizing: border-box;
+    -webkit-border-radius: 10px !important;
+    -moz-border-radius: 10px !important;
+}
+
+@keyframes errorSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.form-error svg {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    color: var(--error-red);
+    margin-top: 2px;
+}
+
+.form-error div {
+    flex: 1;
+}
+
+.form-error strong {
+    display: block;
+    margin-bottom: var(--spacing-xs);
+    font-weight: 700;
+    color: var(--error-red);
+}
+
+.form-error p {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.4;
+    color: var(--error-red);
+    opacity: 0.9;
+}
+
+/* Form Actions */
+.form-actions {
+    margin-top: var(--spacing-lg);
+}
+
+/* Auth Submit Button - 10px border radius */
+.auth-submit,
+button.auth-submit,
+.btn.auth-submit {
+    width: 100% !important;
+    padding: 1.25rem 2rem !important;
+    font-size: 1.125rem !important;
+    font-weight: 700 !important;
+    border-radius: 10px !important; /* 10px as requested */
+    background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-hover)) !important;
+    color: var(--text-light-primary) !important;
+    border: 2px solid var(--primary-blue) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    position: relative !important;
+    overflow: hidden !important;
+    backdrop-filter: blur(10px) !important;
+    letter-spacing: 0.3px !important;
+    box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: var(--spacing-sm) !important;
+    box-sizing: border-box !important;
+    -webkit-border-radius: 10px !important;
+    -moz-border-radius: 10px !important;
+}
+
+.auth-submit::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.6s ease;
+}
+
+.auth-submit:hover::before {
+    left: 100%;
+}
+
+.auth-submit:hover {
+    background: linear-gradient(135deg, var(--primary-blue-hover), var(--primary-blue)) !important;
+    color: var(--text-light-primary) !important;
+    border-color: var(--primary-blue-light) !important;
+    transform: translateY(-3px) scale(1.02) !important;
+    box-shadow: 0 12px 32px rgba(37, 99, 235, 0.5) !important;
+    border-radius: 10px !important;
+    -webkit-border-radius: 10px !important;
+    -moz-border-radius: 10px !important;
+}
+
+.auth-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.auth-submit svg {
+    transition: all 0.3s ease;
+}
+
+.auth-submit:hover svg {
+    transform: scale(1.1);
+    filter: brightness(1.2);
+}
+
+/* Auth Footer */
+.auth-footer {
+    text-align: center;
+    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    z-index: 2;
+}
+
+.auth-link-text {
+    color: var(--text-light-muted);
+    font-size: 0.875rem;
+    margin: 0;
+    font-weight: 500;
+}
+
+.auth-link {
+    color: var(--primary-blue-light);
+    text-decoration: none;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: 10px !important; /* 10px as requested */
+    -webkit-border-radius: 10px !important;
+    -moz-border-radius: 10px !important;
+}
+
+.auth-link:hover {
+    color: var(--text-light-primary);
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(255, 255, 255, 0.1));
+    transform: translateY(-1px);
+    text-decoration: none;
+}
+
+/* Legacy Form Styles (for compatibility) - 10px border radius */
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.02), rgba(37, 99, 235, 0.05));
+    padding: var(--spacing-2xl);
+    width: 100%;
+    max-width: 450px;
+    border-radius: 20px !important; /* Slightly larger for container */
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    box-sizing: border-box;
+    -webkit-border-radius: 20px !important;
+    -moz-border-radius: 20px !important;
+    /* Global cursor effect applies */
+}
+
+.inputForm {
+    border: 2px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 10px !important; /* 10px as requested */
+    height: 56px !important;
+    display: flex !important;
+    align-items: center !important;
+    padding-left: var(--spacing-md) !important;
+    transition: all 0.3s ease !important;
+    position: relative !important;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(37, 99, 235, 0.1)) !important;
+    backdrop-filter: blur(10px) !important;
+    box-sizing: border-box !important;
+    -webkit-border-radius: 10px !important;
+    -moz-border-radius: 10px !important;
+    overflow: hidden !important;
+}
+
+.inputForm svg {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    fill: var(--primary-blue-light);
+    color: var(--primary-blue-light);
+    transition: all 0.3s ease;
+    margin-right: var(--spacing-md);
+    padding-right: var(--spacing-md);
+    border-right: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.inputForm:focus-within {
+    border-color: rgba(37, 99, 235, 0.6) !important;
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(255, 255, 255, 0.05)) !important;
+    box-shadow: 0 8px 24px rgba(37, 99, 235, 0.3) !important;
+    transform: translateY(-2px) !important;
+    border-radius: 10px !important;
+    -webkit-border-radius: 10px !important;
+    -moz-border-radius: 10px !important;
+}
+
+.inputForm:focus-within svg {
+    fill: var(--primary-blue);
+    color: var(--primary-blue);
+    border-right-color: rgba(37, 99, 235, 0.6);
+}
+
+.input {
+    border: none !important;
+    border-radius: 10px !important; /* 10px as requested */
+    width: 100% !important;
+    height: 100% !important;
+    padding: 0 var(--spacing-md) !important;
+    background: transparent !important;
+    color: var(--text-light-primary) !important;
+    font-weight: 500 !important;
+    box-sizing: border-box !important;
+    -webkit-border-radius: 10px !important;
+    -moz-border-radius: 10px !important;
+}
+
+.input::placeholder {
+    color: var(--text-light-muted) !important;
+    opacity: 0.8 !important;
+}
+
+.input:focus {
+    outline: none !important;
+    color: var(--text-light-primary) !important;
+}
+
+/* Additional Bootstrap overrides for common form classes */
+.form-floating > .form-control,
+.form-floating > .form-select {
+    border-radius: 10px !important;
+    -webkit-border-radius: 10px !important;
+    -moz-border-radius: 10px !important;
+}
+
+.form-floating > .form-control:focus,
+.form-floating > .form-select:focus {
+    border-radius: 10px !important;
+    -webkit-border-radius: 10px !important;
+    -moz-border-radius: 10px !important;
+}
+
+/* Input group overrides */
+.input-group > .form-control,
+.input-group > .form-select {
+    border-radius: 10px !important;
+    -webkit-border-radius: 10px !important;
+    -moz-border-radius: 10px !important;
+}
+
+.input-group > .form-control:focus,
+.input-group > .form-select:focus {
+    border-radius: 10px !important;
+    -webkit-border-radius: 10px !important;
+    -moz-border-radius: 10px !important;
+}
+
+/* Responsive Design */
+@media (max-width: 991px) {
+    .auth-page {
+        min-height: calc(100vh - 120px);
+        padding: var(--spacing-xl) var(--spacing-md);
+    }
+}
+
+@media (max-width: 768px) {
+    .auth-page {
+        min-height: calc(100vh - 110px);
+        padding: var(--spacing-lg) var(--spacing-sm);
+    }
+    
+    .auth-wrapper {
+        padding: var(--spacing-xl);
+    }
+    
+    .auth-title {
+        font-size: 2rem;
+    }
+    
+    .auth-subtitle {
+        font-size: 1rem;
+    }
+    
+    .form-input,
+    .form-select,
+    .form-textarea {
+        padding: 0.875rem 1rem !important;
+    }
+    
+    .auth-submit {
+        padding: 1rem 1.5rem !important;
+        font-size: 1rem !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .auth-wrapper {
+        padding: var(--spacing-lg);
+    }
+    
+    .auth-title {
+        font-size: 1.75rem;
+    }
+}
+
+/* Animation Keyframes */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

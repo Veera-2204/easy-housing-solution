@@ -1,0 +1,611 @@
+/* Enhanced Header and Navigation Styles */
+.app-header {
+    background: linear-gradient(135deg, rgba(24, 26, 32, 0.98) 0%, rgba(35, 39, 47, 0.98) 100%);
+    backdrop-filter: blur(30px);
+    transition: all 0.3s ease;
+    /* Make header truly sticky and floating with proper rounded corners */
+    position: fixed;
+    top: var(--spacing-md);
+    left: var(--spacing-md);
+    right: var(--spacing-md);
+    z-index: 1000;
+    border-radius: var(--radius-xl);
+    border: 2px solid rgba(37, 99, 235, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    overflow: visible; /* Changed from hidden to visible for dropdown */
+}
+
+/* Add the subtle top border like footer */
+.app-header::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(37, 99, 235, 0.5), 
+        rgba(37, 99, 235, 0.8), 
+        rgba(37, 99, 235, 0.5), 
+        transparent
+    );
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    z-index: 1;
+}
+
+.app-header.scrolled {
+    background: linear-gradient(135deg, rgba(24, 26, 32, 0.99) 0%, rgba(35, 39, 47, 0.99) 100%);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+    border-color: rgba(37, 99, 235, 0.3);
+}
+
+.app-header.scrolled::before {
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(37, 99, 235, 0.6), 
+        rgba(37, 99, 235, 1), 
+        rgba(37, 99, 235, 0.6), 
+        transparent
+    );
+}
+
+.app-header .navbar {
+    padding: 1.25rem 2rem;
+    background: transparent;
+    min-height: 80px;
+    position: relative;
+    border-radius: inherit; /* Inherit border radius from parent */
+    overflow: visible; /* Allow dropdown to overflow */
+}
+
+/* Fixed navbar content layout */
+.navbar-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    position: relative;
+}
+
+/* Enhanced Brand Styling - No background on hover */
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    font-weight: 800;
+    color: var(--text-light-primary) !important;
+    font-size: 2rem;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    z-index: 10;
+    /* Fixed: Ensure brand doesn't grow */
+    flex-shrink: 0;
+    order: 1;
+}
+
+.navbar-brand:hover {
+    color: var(--primary-blue-light) !important;
+    transform: translateY(-2px) scale(1.05);
+}
+
+.brand-icon {
+    color: var(--primary-blue);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    filter: drop-shadow(0 4px 8px rgba(37, 99, 235, 0.3));
+}
+
+.navbar-brand:hover .brand-icon {
+    color: var(--primary-blue-light);
+    transform: rotate(12deg) scale(1.1);
+    filter: drop-shadow(0 6px 12px rgba(37, 99, 235, 0.5));
+}
+
+.brand-text {
+    font-weight: 800;
+    letter-spacing: -0.8px;
+    background: linear-gradient(135deg, var(--text-light-primary), var(--primary-blue-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Fixed Mobile Toggle Button - Hide on desktop, show on mobile */
+.navbar-toggler {
+    border: none;
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(255, 255, 255, 0.1));
+    border-radius: var(--radius-lg);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    order: 3;
+    flex-shrink: 0;
+    margin: 0;
+    /* Hide on desktop */
+    display: none;
+    min-width: 48px;
+    min-height: 48px;
+}
+
+.navbar-toggler::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.navbar-toggler:hover::before {
+    left: 100%;
+}
+
+.navbar-toggler:focus {
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.4);
+    outline: none;
+}
+
+.navbar-toggler:hover {
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.3), rgba(255, 255, 255, 0.15));
+}
+
+/* Fix toggler icon animation - Fixed rotation logic */
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2.5' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    width: 1.75rem;
+    height: 1.75rem;
+    transition: transform 0.3s ease;
+}
+
+/* Fixed: Animate toggler icon correctly */
+.navbar-toggler[aria-expanded="false"] .navbar-toggler-icon {
+    transform: rotate(0deg);
+}
+
+.navbar-toggler[aria-expanded="true"] .navbar-toggler-icon {
+    transform: rotate(90deg);
+}
+
+/* Fixed navbar collapse positioning - Show on desktop, collapsible on mobile */
+.navbar-collapse {
+    order: 2;
+    flex-grow: 1;
+    /* Show by default on desktop */
+    display: flex !important;
+    justify-content: flex-end;
+    overflow: visible; /* Allow dropdown to overflow */
+}
+
+/* Enhanced Navigation Items */
+.navbar-nav {
+    align-items: center;
+    gap: var(--spacing-lg);
+    /* Keep horizontal layout on desktop */
+    flex-direction: row;
+    position: relative; /* Enable dropdown positioning */
+}
+
+/* Fix dropdown item positioning */
+.nav-item.dropdown {
+    position: relative;
+}
+
+/* Enhanced Login Button with larger size and consistent styling */
+.nav-link {
+    color: var(--text-light-secondary) !important;
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    border-radius: var(--radius-xl);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+    /* Enhanced styling for login button with proper size */
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(37, 99, 235, 0.1));
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    letter-spacing: 0.3px;
+    min-height: 48px;
+    justify-content: center;
+    white-space: nowrap;
+}
+
+.nav-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.nav-link:hover::before {
+    left: 100%;
+}
+
+.nav-link:hover, 
+.nav-link:focus {
+    color: var(--text-light-primary) !important;
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(255, 255, 255, 0.1));
+    border-color: rgba(37, 99, 235, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(37, 99, 235, 0.3);
+}
+
+.nav-link svg {
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover svg {
+    transform: scale(1.1) rotate(5deg);
+    filter: brightness(1.3);
+}
+
+/* Enhanced Register Button with proper sizing */
+.btn-register {
+    background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-hover)) !important;
+    color: var(--text-light-primary) !important;
+    border: 2px solid var(--primary-blue);
+    padding: 1rem 2.5rem !important;
+    border-radius: var(--radius-xl) !important;
+    font-weight: 700;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    letter-spacing: 0.5px;
+    backdrop-filter: blur(10px);
+    min-width: 140px;
+    min-height: 48px;
+    justify-content: center;
+    white-space: nowrap;
+}
+
+.btn-register::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.6s ease;
+}
+
+.btn-register:hover::before {
+    left: 100%;
+}
+
+.btn-register:hover {
+    background: linear-gradient(135deg, var(--primary-blue-hover), var(--primary-blue)) !important;
+    color: var(--text-light-primary) !important;
+    border-color: var(--primary-blue-light);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 12px 32px rgba(37, 99, 235, 0.5);
+}
+
+/* Enhanced User Menu Dropdown with proper sizing */
+.user-menu {
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.15), rgba(255, 255, 255, 0.1));
+    border: 2px solid rgba(37, 99, 235, 0.3);
+    border-radius: var(--radius-xl);
+    padding: 1rem 1.5rem;
+    min-width: auto !important;
+    min-height: 48px;
+    justify-content: space-between;
+    backdrop-filter: blur(20px);
+    position: relative;
+    overflow: hidden;
+}
+
+.user-menu::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.user-menu:hover::before {
+    left: 100%;
+}
+
+.user-menu::after {
+    content: '';
+    border: none;
+    background: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='rgba%28255,255,255,1%29' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='M2 5l6 6 6-6'/%3e%3c/svg%3e") no-repeat center center;
+    background-size: 18px;
+    width: 18px;
+    height: 18px;
+    margin-left: var(--spacing-sm);
+    transition: transform 0.3s ease;
+}
+
+.user-menu[aria-expanded="true"]::after {
+    transform: rotate(180deg);
+}
+
+.user-name {
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 600;
+}
+
+/* Enhanced Dropdown Menu - Fixed positioning */
+.dropdown-menu {
+    background: linear-gradient(135deg, rgba(24, 26, 32, 0.98), rgba(35, 39, 47, 0.98));
+    backdrop-filter: blur(30px);
+    border: 2px solid rgba(37, 99, 235, 0.2);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-md);
+    margin-top: var(--spacing-sm);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
+    min-width: 220px;
+    animation: dropdownFadeIn 0.3s ease;
+    /* Fixed: Ensure dropdown appears above other content */
+    position: absolute !important;
+    top: 100% !important;
+    right: 0 !important;
+    left: auto !important;
+    z-index: 1050;
+    /* Fixed: Prevent expanding navbar */
+    transform: none !important;
+    float: none !important;
+}
+
+/* Fixed: Ensure dropdown container doesn't affect navbar height */
+.dropdown {
+    position: relative;
+}
+
+.dropdown-toggle::after {
+    display: none; /* Hide bootstrap default arrow since we have custom one */
+}
+
+@keyframes dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.dropdown-item {
+    color: var(--text-light-secondary);
+    padding: 0.875rem 1.125rem;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid transparent;
+    background: transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+.dropdown-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(37, 99, 235, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.dropdown-item:hover::before {
+    left: 100%;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+    color: var(--text-light-primary);
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(255, 255, 255, 0.05));
+    border-color: rgba(37, 99, 235, 0.3);
+    transform: translateX(4px);
+}
+
+.dropdown-item svg {
+    transition: all 0.3s ease;
+}
+
+.dropdown-item:hover svg {
+    transform: scale(1.1);
+    filter: brightness(1.3);
+}
+
+.dropdown-divider {
+    border-color: rgba(37, 99, 235, 0.3);
+    margin: var(--spacing-sm) 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(37, 99, 235, 0.3), transparent);
+    border: none;
+}
+
+/* Mobile Responsive Enhancements */
+@media (max-width: 991px) {
+    .app-header {
+        top: var(--spacing-sm);
+        left: var(--spacing-sm);
+        right: var(--spacing-sm);
+        border-radius: var(--radius-lg);
+        overflow: hidden; /* Hide overflow on mobile */
+    }
+    
+    .app-header .navbar {
+        min-height: 70px;
+        padding: 1rem;
+        border-radius: inherit;
+        overflow: hidden; /* Hide overflow on mobile */
+    }
+    
+    body.app-body {
+        padding-top: 120px;
+    }
+    
+    /* Show toggler button on mobile */
+    .navbar-toggler {
+        display: block !important;
+    }
+    
+    /* Hide navbar collapse by default on mobile, show when toggled */
+    .navbar-collapse {
+        display: none !important;
+        overflow: hidden; /* Hide overflow on mobile */
+    }
+    
+    /* Show navbar collapse when it has the 'show' class */
+    .navbar-collapse.show {
+        display: block !important;
+    }
+    
+    /* Ensure navbar content doesn't shift */
+    .navbar-content {
+        width: 100%;
+        justify-content: space-between;
+        align-items: center;
+        flex-direction: row;
+    }
+    
+    /* Reset orders for mobile layout */
+    .navbar-brand {
+        order: 1;
+    }
+    
+    .navbar-toggler {
+        order: 3;
+    }
+    
+    .navbar-collapse {
+        order: 2;
+        justify-content: flex-start;
+        /* Position mobile menu below the toggler */
+        position: absolute;
+        top: 100%;
+        left: var(--spacing-md);
+        right: var(--spacing-md);
+        background: linear-gradient(135deg, rgba(24, 26, 32, 0.98), rgba(35, 39, 47, 0.98));
+        backdrop-filter: blur(30px);
+        border-radius: var(--radius-xl);
+        padding: var(--spacing-xl);
+        margin-top: var(--spacing-md);
+        border: 2px solid rgba(37, 99, 235, 0.2);
+        box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+        animation: mobileMenuFadeIn 0.3s ease;
+        z-index: 1000;
+        /* Remove flex-grow on mobile */
+        flex-grow: 0;
+        overflow: visible; /* Allow dropdown to show */
+    }
+    
+    @keyframes mobileMenuFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .navbar-nav {
+        gap: var(--spacing-sm);
+        /* Stack menu items vertically on mobile */
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .nav-link {
+        padding: 1.25rem 1.5rem;
+        border-radius: var(--radius-xl);
+        justify-content: flex-start;
+        margin-bottom: var(--spacing-xs);
+        width: 100%;
+        min-width: auto;
+    }
+    
+    .btn-register {
+        margin-top: var(--spacing-lg);
+        justify-content: center;
+        width: 100%;
+        min-width: auto;
+    }
+    
+    .user-menu {
+        justify-content: flex-start;
+        min-width: auto;
+        width: 100%;
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .dropdown-menu {
+        position: static !important;
+        transform: none !important;
+        background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(255, 255, 255, 0.05));
+        border: 2px solid rgba(37, 99, 235, 0.2);
+        box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.2);
+        margin: var(--spacing-sm) 0 0 0;
+        border-radius: var(--radius-lg);
+        top: auto !important;
+        right: auto !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .app-header {
+        top: var(--spacing-xs);
+        left: var(--spacing-xs);
+        right: var(--spacing-xs);
+    }
+    
+    body.app-body {
+        padding-top: 110px;
+    }
+    
+    .navbar-brand {
+        font-size: 1.75rem;
+    }
+    
+    .brand-icon {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .user-name {
+        max-width: 100px;
+    }
+    
+    .app-header .navbar {
+        min-height: 60px;
+        padding: 0.75rem;
+        border-radius: inherit;
+    }
+    
+    .navbar-collapse {
+        margin-top: var(--spacing-sm);
+        padding: var(--spacing-lg);
+        left: var(--spacing-sm);
+        right: var(--spacing-sm);
+    }
+}

@@ -1,0 +1,72 @@
+/* Profile Page Responsive Styles */
+@media (max-width: 1200px) {
+    .profile-container {
+        margin: var(--spacing-xl) !important;
+        padding: var(--spacing-xl) !important;
+    }
+}
+
+@media (max-width: 992px) {
+    .profile-title {
+        font-size: 2.5rem !important;
+    }
+    
+    .profile-form-container {
+        padding: var(--spacing-lg) !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .profile-title {
+        font-size: 2rem !important;
+    }
+    
+    .profile-container {
+        margin: var(--spacing-lg) !important;
+        padding: var(--spacing-lg) !important;
+    }
+    
+    .profile-form-container {
+        padding: var(--spacing-lg) !important;
+    }
+    
+    .form-actions {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+    
+    .form-actions .btn {
+        width: 100% !important;
+        margin-bottom: var(--spacing-sm) !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .profile-title {
+        font-size: 1.75rem !important;
+    }
+    
+    .profile-container {
+        margin: var(--spacing-md) !important;
+        padding: var(--spacing-md) !important;
+    }
+    
+    .profile-form-container {
+        padding: var(--spacing-md) !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .profile-title {
+        font-size: 1.5rem !important;
+    }
+    
+    .profile-container {
+        margin: var(--spacing-sm) !important;
+        padding: var(--spacing-sm) !important;
+    }
+    
+    .profile-form-container {
+        padding: var(--spacing-sm) !important;
+    }
+}

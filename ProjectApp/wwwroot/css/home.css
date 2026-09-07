@@ -1,0 +1,199 @@
+/* Home Page Specific Styles - Centered Single Button Layout */
+
+/* Hero Section - Perfectly centered content */
+.hero-modern.home-hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-content {
+    max-width: 800px;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+    padding: var(--spacing-2xl);
+    animation: fadeInUp 0.8s ease-out;
+    /* Perfect centering */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-text-content {
+    margin-bottom: var(--spacing-2xl);
+    /* Center text content */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.hero-title {
+    font-size: 4.5rem;
+    font-weight: 800;
+    color: var(--text-light-primary);
+    margin-bottom: var(--spacing-lg);
+    line-height: 1.1;
+    letter-spacing: -2px;
+    background: linear-gradient(135deg, var(--text-light-primary), var(--primary-blue-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-align: center;
+}
+
+.hero-subtitle {
+    font-size: 1.5rem;
+    color: var(--text-light-muted);
+    margin: 0 auto;
+    line-height: 1.6;
+    font-weight: 500;
+    max-width: 600px;
+    text-align: center;
+}
+
+.hero-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+/* Enhanced Primary CTA Button - Centered and prominent (removed uppercase) */
+.hero-cta-button {
+    background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-hover)) !important;
+    color: var(--text-light-primary) !important;
+    border: 2px solid var(--primary-blue);
+    padding: 1.5rem 3rem !important;
+    border-radius: var(--radius-xl) !important;
+    font-weight: 700;
+    font-size: 1.25rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    letter-spacing: 0.5px;
+    backdrop-filter: blur(10px);
+    min-width: 250px;
+    min-height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-md);
+    text-decoration: none;
+    white-space: nowrap;
+    box-shadow: 0 12px 40px rgba(37, 99, 235, 0.4);
+}
+
+.hero-cta-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.6s ease;
+}
+
+.hero-cta-button:hover::before {
+    left: 100%;
+}
+
+.hero-cta-button:hover {
+    background: linear-gradient(135deg, var(--primary-blue-hover), var(--primary-blue)) !important;
+    color: var(--text-light-primary) !important;
+    border-color: var(--primary-blue-light);
+    transform: translateY(-4px) scale(1.08);
+    box-shadow: 0 16px 48px rgba(37, 99, 235, 0.6);
+    text-decoration: none;
+}
+
+.hero-cta-button svg {
+    transition: all 0.3s ease;
+}
+
+.hero-cta-button:hover svg {
+    transform: scale(1.2) rotate(5deg);
+    filter: brightness(1.2);
+}
+
+/* Responsive Design - Maintaining center alignment */
+@media (max-width: 991px) {
+    .hero-modern.home-hero {
+        padding: 100px var(--spacing-md) var(--spacing-lg);
+        min-height: 90vh;
+    }
+    
+    .hero-title {
+        font-size: 3.5rem;
+    }
+    
+    .hero-cta-button {
+        min-width: 220px;
+        font-size: 1.125rem;
+        padding: 1.25rem 2.5rem !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-modern.home-hero {
+        padding: 90px var(--spacing-md) var(--spacing-lg);
+    }
+    
+    .hero-content {
+        padding: var(--spacing-xl);
+        max-width: 100%;
+    }
+    
+    .hero-title {
+        font-size: 2.8rem;
+        letter-spacing: -1px;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.25rem;
+    }
+    
+    .hero-cta-button {
+        min-width: 200px;
+        padding: 1.125rem 2rem !important;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-content {
+        padding: var(--spacing-lg);
+    }
+    
+    .hero-title {
+        font-size: 2.2rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.125rem;
+    }
+    
+    .hero-cta-button {
+        min-width: 180px;
+        padding: 1rem 1.5rem !important;
+        font-size: 0.9rem;
+    }
+}
+
+/* Animation Keyframes */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}}

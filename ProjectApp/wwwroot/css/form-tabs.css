@@ -1,0 +1,409 @@
+/* Form Tabs and Multi-step Form Styles */
+.form-tabs {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-xl);
+    border-bottom: 1px solid var(--border-light);
+    padding-bottom: var(--spacing-sm);
+}
+
+.form-tab {
+    padding: 0.75rem var(--spacing-lg);
+    color: var(--text-dark-muted);
+    cursor: pointer;
+    border-radius: var(--radius-md);
+    transition: all 0.3s ease;
+    background: var(--bg-light-secondary);
+    border: 1px solid var(--border-light);
+}
+
+.form-tab:hover {
+    background: var(--bg-light-tertiary);
+}
+
+.form-tab.active {
+    background: var(--primary-blue);
+    color: var(--text-light-primary);
+    border-color: var(--primary-blue);
+}
+
+.form-sections {
+    margin-bottom: var(--spacing-xl);
+}
+
+.form-section {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.form-section.active {
+    display: block;
+}
+
+/* Multi-step Form Progress Indicator */
+.form-progress {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: var(--spacing-xl);
+    padding: 0 var(--spacing-md);
+    gap: var(--spacing-lg);
+}
+
+.progress-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    flex: 0 0 auto;
+}
+
+.progress-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: calc(100% + 0.5rem);
+    width: 2rem;
+    height: 3px;
+    background: var(--border-light);
+    z-index: 1;
+    border-radius: 2px;
+    transition: background 0.3s ease;
+}
+
+.progress-step.completed:not(:last-child)::after {
+    background: var(--primary-blue);
+}
+
+.step-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-full);
+    background: var(--border-light);
+    color: var(--text-dark-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.875rem;
+    margin-bottom: var(--spacing-sm);
+    position: relative;
+    z-index: 2;
+    transition: all 0.3s ease;
+    border: 2px solid var(--border-light);
+}
+
+.progress-step.active .step-circle {
+    background: var(--primary-blue);
+    color: var(--text-light-primary);
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+.progress-step.completed .step-circle {
+    background: var(--success-green);
+    color: var(--text-light-primary);
+    border-color: var(--success-green);
+}
+
+.progress-step.completed .step-circle::before {
+    content: '?';
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+.step-label {
+    font-size: 0.75rem;
+    color: var(--text-dark-muted);
+    text-align: center;
+    margin-top: 0.25rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.progress-step.active .step-label {
+    color: var(--primary-blue);
+    font-weight: 600;
+}
+
+.progress-step.completed .step-label {
+    color: var(--success-green);
+    font-weight: 600;
+}
+
+/* Multi-step Form Steps */
+.form-step {
+    display: none;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.form-step.active {
+    display: block;
+}
+
+.step-header {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--border-light);
+}
+
+.step-title {
+    color: var(--primary-blue);
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+}
+
+.step-subtitle {
+    color: var(--text-dark-muted);
+    font-size: 0.875rem;
+    margin: 0;
+}
+
+/* Form Navigation */
+.form-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--border-light);
+    gap: var(--spacing-md);
+}
+
+.nav-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-weight: 500;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.875rem;
+    min-width: 120px;
+    white-space: nowrap;
+}
+
+.nav-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Ensure proper button spacing */
+.form-navigation .prev-btn {
+    margin-right: auto;
+}
+
+.form-navigation .next-btn,
+.form-navigation .auth-submit {
+    margin-left: auto;
+}
+
+/* Input validation styling */
+.form-input.is-invalid {
+    border-color: var(--error-red) !important;
+    box-shadow: 0 0 0 0.2rem rgba(239, 68, 68, 0.25) !important;
+}
+
+.form-input.is-valid {
+    border-color: var(--success-green) !important;
+    box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25) !important;
+}
+
+.field-validation-error {
+    color: var(--error-red);
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    display: block;
+    font-weight: 500;
+}
+
+.input-error {
+    color: var(--error-red);
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    display: block;
+    font-weight: 500;
+}
+
+/* Show validation state icons */
+.input-group {
+    position: relative;
+}
+
+.form-input.is-invalid + .input-error::before,
+.form-input.is-invalid + .field-validation-error::before {
+    content: '?';
+    margin-right: 0.25rem;
+    color: var(--error-red);
+}
+
+.form-input.is-valid::after {
+    content: '?';
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--success-green);
+    font-weight: bold;
+    pointer-events: none;
+}
+
+/* Focus states */
+.form-input:focus {
+    outline: none;
+    border-color: var(--primary-blue) !important;
+    box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.25) !important;
+}
+
+.form-input:focus.is-invalid {
+    border-color: var(--error-red) !important;
+    box-shadow: 0 0 0 0.2rem rgba(239, 68, 68, 0.25) !important;
+}
+
+.form-input:focus.is-valid {
+    border-color: var(--success-green) !important;
+    box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25) !important;
+}
+
+/* Current images container */
+.current-images-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+    padding: 15px;
+    background: var(--bg-light-secondary);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-light);
+}
+
+.current-image-item {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-light);
+    transition: transform 0.2s ease;
+}
+
+.current-image-item:hover {
+    transform: scale(1.05);
+}
+
+.current-image-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+}
+
+.text-muted {
+    font-size: 0.875rem;
+    color: var(--text-dark-muted);
+    margin-top: 5px;
+    display: block;
+}
+
+.form-navigation {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: center;
+    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--border-light);
+}
+
+.form-navigation .btn {
+    min-width: 120px;
+}
+
+.input-buttons {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: center;
+    margin-top: var(--spacing-xl);
+}
+
+.input-buttons .btn {
+    min-width: 150px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .form-progress {
+        gap: var(--spacing-sm);
+        padding: 0 var(--spacing-sm);
+    }
+
+    .step-label {
+        font-size: 0.625rem;
+    }
+
+    .step-circle {
+        width: 32px;
+        height: 32px;
+        font-size: 0.75rem;
+    }
+
+    .progress-step:not(:last-child)::after {
+        width: 1rem;
+        left: calc(100% + 0.25rem);
+    }
+
+    .form-navigation {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .nav-btn {
+        width: 100%;
+        min-width: auto;
+    }
+
+    .form-navigation .prev-btn,
+    .form-navigation .next-btn,
+    .form-navigation .auth-submit {
+        margin: 0;
+    }
+    
+    .input-buttons {
+        flex-direction: column;
+    }
+    
+    .input-buttons .btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .progress-step:not(:last-child)::after {
+        display: none;
+    }
+    
+    .form-progress {
+        gap: 0.25rem;
+    }
+}
+
+@keyframes fadeIn {
+    from { 
+        opacity: 0; 
+        transform: translateY(10px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}

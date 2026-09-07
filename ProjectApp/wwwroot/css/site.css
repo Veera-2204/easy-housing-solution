@@ -1,0 +1,27 @@
+/* Modern Razor Pages Site - Modular CSS Architecture */
+
+/* Import CSS Variables and Base Styles */
+@import "variables.css";
+@import "base.css";
+
+/* Import Global Layout Components */
+@import "layout.css";
+@import "listings.css";
+
+/* Import Component Styles */
+@import "navigation.css";
+@import "buttons.css";
+@import "forms.css";
+@import "form-tabs.css";
+@import "cards.css";
+@import "tables.css";
+@import "filters.css";
+@import "properties.css";
+@import "hero.css";
+@import "footer.css";
+@import "admin.css";
+
+/* Import Page-Specific Styles */
+@import "home.css";
+
+/* Additional page-specific imports can be added here as needed */

@@ -1,0 +1,235 @@
+/* Button Styles */
+.btn {
+    border-radius: var(--radius-md);
+    font-weight: 500;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px var(--shadow-light);
+    background: var(--bg-light-primary);
+    color: var(--text-dark-secondary);
+    border: 1px solid var(--border-light);
+    padding: var(--spacing-sm) var(--spacing-md);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background: var(--bg-light-secondary);
+    color: var(--text-dark-secondary);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px var(--shadow-medium);
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: var(--primary-blue);
+    color: var(--text-light-primary);
+    border: 2px solid var(--primary-blue);
+    border-radius: var(--radius-lg);
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 1rem 2rem;
+    box-shadow: 0 4px 16px var(--shadow-blue);
+    transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+}
+
+.btn-primary:hover {
+    background: var(--primary-blue-hover);
+    color: var(--text-light-primary);
+    border-color: var(--primary-blue-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--shadow-blue-heavy);
+}
+
+.btn-secondary {
+    background: var(--bg-light-primary);
+    color: var(--text-dark-primary);
+    border: 2px solid var(--border-medium);
+    border-radius: var(--radius-lg);
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 1rem 2rem;
+    box-shadow: 0 4px 16px var(--shadow-light);
+    transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+}
+
+.btn-secondary:hover {
+    background: var(--bg-light-secondary);
+    color: var(--text-dark-primary);
+    border-color: var(--border-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--shadow-medium);
+}
+
+.btn-info {
+    background: var(--primary-blue-light);
+    color: var(--text-light-primary);
+    border: none;
+}
+
+.btn-info:hover {
+    background: var(--primary-blue);
+    color: var(--text-light-primary);
+}
+
+.btn-danger {
+    background: var(--error-red);
+    color: var(--text-light-primary);
+    border: none;
+}
+
+.btn-danger:hover {
+    background: var(--error-red-hover);
+    color: var(--text-light-primary);
+}
+
+.btn-link {
+    color: var(--text-light-dim);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+    background: transparent;
+    border: none;
+}
+
+.btn-link:hover {
+    color: var(--text-light-secondary);
+    text-decoration: underline;
+    background: transparent;
+}
+
+.btn svg {
+    margin-right: var(--spacing-sm);
+    vertical-align: -0.125em;
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Navigation Buttons - Consistent styling for both prev and next */
+.nav-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    padding: 1rem 2rem;
+    border-radius: var(--radius-lg);
+    font-weight: 600;
+    font-size: 1rem;
+    transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+    text-decoration: none;
+    border: 2px solid;
+    cursor: pointer;
+    min-width: 140px;
+    white-space: nowrap;
+    box-shadow: 0 4px 16px var(--shadow-medium);
+}
+
+.nav-btn:hover {
+    transform: translateY(-2px);
+    text-decoration: none;
+}
+
+.nav-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: 0 2px 8px var(--shadow-light);
+}
+
+/* Primary navigation button (Next/Submit) - Blue theme */
+.nav-btn.btn-primary {
+    background: var(--primary-blue);
+    color: var(--text-light-primary);
+    border-color: var(--primary-blue);
+    box-shadow: 0 4px 16px var(--shadow-blue);
+}
+
+.nav-btn.btn-primary:hover {
+    background: var(--primary-blue-hover);
+    border-color: var(--primary-blue-hover);
+    box-shadow: 0 6px 20px var(--shadow-blue-heavy);
+}
+
+/* Secondary navigation button (Previous) - White theme with same animations */
+.nav-btn.btn-secondary {
+    background: var(--bg-light-primary);
+    color: var(--text-dark-primary);
+    border-color: var(--border-medium);
+    box-shadow: 0 4px 16px var(--shadow-light);
+}
+
+.nav-btn.btn-secondary:hover {
+    background: var(--bg-light-secondary);
+    color: var(--text-dark-primary);
+    border-color: var(--border-dark);
+    box-shadow: 0 6px 20px var(--shadow-medium);
+    transform: translateY(-2px);
+}
+
+.nav-btn.btn-secondary:active {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px var(--shadow-light);
+}
+
+/* Submit Buttons */
+.button-submit, 
+.form button, 
+input[type="submit"], 
+button[type="submit"],
+.auth-submit {
+    background: var(--primary-blue);
+    color: var(--text-light-primary);
+    border-radius: var(--radius-lg);
+    font-weight: 600;
+    font-size: 1rem;
+    box-shadow: 0 4px 16px var(--shadow-blue);
+    border: 2px solid var(--primary-blue);
+    padding: 1rem 2rem;
+    transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+    margin: 20px 0 10px 0;
+    width: 100%;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: var(--spacing-sm);
+}
+
+.button-submit:hover, 
+.form button:hover, 
+input[type="submit"]:hover, 
+button[type="submit"]:hover,
+.auth-submit:hover {
+    background: var(--primary-blue-hover);
+    color: var(--text-light-primary);
+    border-color: var(--primary-blue-hover);
+    box-shadow: 0 6px 20px var(--shadow-blue-heavy);
+    transform: translateY(-2px);
+}
+
+/* Disabled States */
+.input:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled,
+.button-submit:disabled,
+.btn:disabled,
+.nav-btn:disabled,
+.auth-submit:disabled {
+    background-color: var(--bg-light-tertiary) !important;
+    color: var(--text-dark-light) !important;
+    opacity: 0.6;
+    cursor: not-allowed;
+    border-color: var(--border-medium) !important;
+    transform: none !important;
+    box-shadow: 0 2px 8px var(--shadow-light) !important;
+}
