@@ -1,0 +1,694 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "contentVersion": "1.0.0.0",
+        "triggers": {
+            "When_a_HTTP_request_is_received": {
+                "type": "Request",
+                "kind": "Http"
+            }
+        },
+        "actions": {
+            "Parse_JSON": {
+                "type": "ParseJson",
+                "inputs": {
+                    "content": "@triggerBody()",
+                    "schema": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string"
+                                },
+                                "topic": {
+                                    "type": "string"
+                                },
+                                "subject": {
+                                    "type": "string"
+                                },
+                                "eventType": {
+                                    "type": "string"
+                                },
+                                "eventTime": {
+                                    "type": "string"
+                                },
+                                "dataVersion": {
+                                    "type": "string"
+                                },
+                                "metadataVersion": {
+                                    "type": "string"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+                                        "api": {
+                                            "type": "string"
+                                        },
+                                        "clientRequestId": {
+                                            "type": "string"
+                                        },
+                                        "requestId": {
+                                            "type": "string"
+                                        },
+                                        "eTag": {
+                                            "type": "string"
+                                        },
+                                        "contentType": {
+                                            "type": "string"
+                                        },
+                                        "contentLength": {
+                                            "type": [
+                                                "integer",
+                                                "string"
+                                            ]
+                                        },
+                                        "blobType": {
+                                            "type": "string"
+                                        },
+                                        "url": {
+                                            "type": "string"
+                                        },
+                                        "sequencer": {
+                                            "type": "string"
+                                        },
+                                        "storageDiagnostics": {
+                                            "type": "object",
+                                            "properties": {
+                                                "batchId": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "url"
+                                    ]
+                                }
+                            },
+                            "required": [
+                                "id",
+                                "eventType",
+                                "data"
+                            ]
+                        }
+                    }
+                },
+                "runAfter": {}
+            },
+            "Handle_Subscription_Validation": {
+                "type": "If",
+                "expression": {
+                    "equals": [
+                        "@first(body('Parse_JSON'))?['eventType']",
+                        "Microsoft.EventGrid.SubscriptionValidationEvent"
+                    ]
+                },
+                "actions": {
+                    "Respond_Subscription_Validation": {
+                        "type": "Response",
+                        "kind": "Http",
+                        "inputs": {
+                            "statusCode": 200,
+                            "body": {
+                                "validationResponse": "@first(body('Parse_JSON'))?['data']?['validationCode']"
+                            }
+                        }
+                    },
+                    "Terminate_Validation_Return": {
+                        "type": "Terminate",
+                        "inputs": {
+                            "runStatus": "Succeeded"
+                        },
+                        "runAfter": {
+                            "Respond_Subscription_Validation": [
+                                "Succeeded"
+                            ]
+                        }
+                    }
+                },
+                "else": {
+                    "actions": {}
+                },
+                "runAfter": {
+                    "Parse_JSON": [
+                        "Succeeded"
+                    ]
+                }
+            },
+            "Guard_BlobCreated": {
+                "type": "If",
+                "expression": {
+                    "equals": [
+                        "@first(body('Parse_JSON'))?['eventType']",
+                        "Microsoft.Storage.BlobCreated"
+                    ]
+                },
+                "actions": {},
+                "else": {
+                    "actions": {
+                        "Terminate_Non_BlobCreated": {
+                            "type": "Terminate",
+                            "inputs": {
+                                "runStatus": "Succeeded"
+                            }
+                        }
+                    }
+                },
+                "runAfter": {
+                    "Handle_Subscription_Validation": [
+                        "Succeeded",
+                        "Skipped"
+                    ]
+                }
+            },
+            "Initialize_containerName": {
+                "type": "InitializeVariable",
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "containerName",
+                            "type": "string",
+                            "value": "@{split(uriPath(first(body('Parse_JSON'))?['data']?['url']), '/')[1]}"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Guard_BlobCreated": [
+                        "Succeeded"
+                    ]
+                }
+            },
+            "Initialize_blobName": {
+                "type": "InitializeVariable",
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "blobName",
+                            "type": "string",
+                            "value": "@{join(skip(split(uriPath(first(body('Parse_JSON'))?['data']?['url']), '/'), 2), '/')}"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Initialize_containerName": [
+                        "Succeeded"
+                    ]
+                }
+            },
+            "Initialize_blobFileId": {
+                "type": "InitializeVariable",
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "blobFileId",
+                            "type": "string",
+                            "value": "@{base64(concat('/', variables('containerName'), '/', variables('blobName')))}"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Initialize_blobName": [
+                        "Succeeded"
+                    ]
+                }
+            },
+            "Get_blob_content_(V2)": {
+                "type": "ApiConnection",
+                "inputs": {
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['azureblob']['connectionId']"
+                        }
+                    },
+                    "method": "get",
+                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('AccountNameFromSettings'))}/files/@{encodeURIComponent(encodeURIComponent(variables('blobFileId')))}/content",
+                    "queries": {
+                        "inferContentType": true
+                    }
+                },
+                "runAfter": {
+                    "Initialize_blobFileId": [
+                        "Succeeded"
+                    ]
+                }
+            },
+            "Parse_Blob_into_JSON_": {
+                "type": "ParseJson",
+                "inputs": {
+                    "content": "@body('Get_blob_content_(V2)')",
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "properties": {
+                                "type": "object",
+                                "properties": {
+                                    "propertyId": {
+                                        "type": "string"
+                                    },
+                                    "propertyName": {
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "address": {
+                                        "type": "string"
+                                    },
+                                    "cityId": {
+                                        "type": "string"
+                                    },
+                                    "cityName": {
+                                        "type": "string"
+                                    },
+                                    "stateId": {
+                                        "type": "string"
+                                    },
+                                    "stateName": {
+                                        "type": "string"
+                                    },
+                                    "priceRange": {
+                                        "type": [
+                                            "number",
+                                            "string"
+                                        ]
+                                    },
+                                    "initialDeposit": {
+                                        "type": [
+                                            "number",
+                                            "string"
+                                        ]
+                                    },
+                                    "isActive": {
+                                        "type": [
+                                            "boolean",
+                                            "string"
+                                        ]
+                                    },
+                                    "landmark": {
+                                        "type": "string"
+                                    },
+                                    "propertyType": {
+                                        "type": "string"
+                                    },
+                                    "propertyOption": {
+                                        "type": "string"
+                                    },
+                                    "sellerId": {
+                                        "type": "string"
+                                    },
+                                    "sellerEmailId": {
+                                        "type": "string"
+                                    },
+                                    "images": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "imageId": {
+                                                    "type": "string"
+                                                },
+                                                "imageData": {
+                                                    "type": "string"
+                                                },
+                                                "propertyId": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "runAfter": {
+                    "Get_blob_content_(V2)": [
+                        "Succeeded"
+                    ]
+                }
+            },
+            "Data_Validation": {
+                "type": "InitializeVariable",
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "IsDataValidated",
+                            "type": "boolean",
+                            "value": true
+                        },
+                        {
+                            "name": "MessagesHtml",
+                            "type": "string",
+                            "value": ""
+                        },
+                        {
+                            "name": "EmailMessage",
+                            "type": "string",
+                            "value": ""
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Parse_Blob_into_JSON_": [
+                        "Succeeded"
+                    ]
+                }
+            },
+            "Image_Count_Condition": {
+                "type": "If",
+                "expression": {
+                    "and": [
+                        {
+                            "greater": [
+                                "@length(coalesce(body('Parse_Blob_into_JSON_')?['images'], json('[]')))",
+                                0
+                            ]
+                        }
+                    ]
+                },
+                "actions": {},
+                "else": {
+                    "actions": {
+                        "Add_Images_Message": {
+                            "type": "AppendToStringVariable",
+                            "inputs": {
+                                "name": "MessagesHtml",
+                                "value": "<li>Please add property images</li>"
+                            }
+                        },
+                        "validation_failed": {
+                            "type": "SetVariable",
+                            "inputs": {
+                                "name": "IsDataValidated",
+                                "value": false
+                            },
+                            "runAfter": {
+                                "Add_Images_Message": [
+                                    "Succeeded"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "runAfter": {
+                    "Data_Validation": [
+                        "Succeeded"
+                    ]
+                }
+            },
+            "Price_Range": {
+                "type": "If",
+                "expression": {
+                    "and": [
+                        {
+                            "greater": [
+                                "@coalesce(body('Parse_Blob_into_JSON_')?['priceRange'], 0)",
+                                0
+                            ]
+                        }
+                    ]
+                },
+                "actions": {},
+                "else": {
+                    "actions": {
+                        "Incorrect_Price_Range_": {
+                            "type": "AppendToStringVariable",
+                            "inputs": {
+                                "name": "MessagesHtml",
+                                "value": "<li>Price must be greater than 0</li>"
+                            }
+                        },
+                        "Failed_At_Price_Range": {
+                            "type": "SetVariable",
+                            "inputs": {
+                                "name": "IsDataValidated",
+                                "value": false
+                            },
+                            "runAfter": {
+                                "Incorrect_Price_Range_": [
+                                    "Succeeded"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "runAfter": {
+                    "Image_Count_Condition": [
+                        "Succeeded"
+                    ]
+                }
+            },
+            "Check_Rent_or_Sell_Property": {
+                "type": "If",
+                "expression": {
+                    "and": [
+                        {
+                            "equals": [
+                                "@body('Parse_Blob_into_JSON_')?['propertyType']",
+                                "Rent"
+                            ]
+                        }
+                    ]
+                },
+                "actions": {
+                    "Is_Initial_deposit_less_than_or_equal_to_twice_the_price": {
+                        "type": "If",
+                        "expression": {
+                            "and": [
+                                {
+                                    "lessOrEquals": [
+                                        "@body('Parse_Blob_into_JSON_')?['initialDeposit']",
+                                        "@mul(2, body('Parse_Blob_into_JSON_')?['priceRange'])"
+                                    ]
+                                }
+                            ]
+                        },
+                        "actions": {},
+                        "else": {
+                            "actions": {
+                                "Condition_failure_message": {
+                                    "type": "AppendToStringVariable",
+                                    "inputs": {
+                                        "name": "MessagesHtml",
+                                        "value": "<li>Rental amount must be <= twice the price</li>"
+                                    }
+                                },
+                                "Failed_Validation": {
+                                    "type": "SetVariable",
+                                    "inputs": {
+                                        "name": "IsDataValidated",
+                                        "value": false
+                                    },
+                                    "runAfter": {
+                                        "Condition_failure_message": [
+                                            "Succeeded"
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "Is_Initial_Deposit_greater_than_0": {
+                        "type": "If",
+                        "expression": {
+                            "and": [
+                                {
+                                    "greater": [
+                                        "@body('Parse_Blob_into_JSON_')?['initialDeposit']",
+                                        0
+                                    ]
+                                }
+                            ]
+                        },
+                        "actions": {},
+                        "else": {
+                            "actions": {
+                                "Condition_Failied_": {
+                                    "type": "AppendToStringVariable",
+                                    "inputs": {
+                                        "name": "MessagesHtml",
+                                        "value": "<li>Your Rental Deposit amount must be greater than 0</li>"
+                                    }
+                                },
+                                "Failed_At_Initial_Deposit": {
+                                    "type": "SetVariable",
+                                    "inputs": {
+                                        "name": "IsDataValidated",
+                                        "value": false
+                                    },
+                                    "runAfter": {
+                                        "Condition_Failied_": [
+                                            "Succeeded"
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "runAfter": {
+                            "Is_Initial_deposit_less_than_or_equal_to_twice_the_price": [
+                                "Succeeded"
+                            ]
+                        }
+                    }
+                },
+                "else": {
+                    "actions": {}
+                },
+                "runAfter": {
+                    "Price_Range": [
+                        "Succeeded"
+                    ]
+                }
+            },
+            "Validation_successful_or_unsuccessful": {
+                "type": "If",
+                "expression": {
+                    "and": [
+                        {
+                            "equals": [
+                                "@variables('IsDataValidated')",
+                                true
+                            ]
+                        }
+                    ]
+                },
+                "actions": {
+                    "Successful_Validation": {
+                        "type": "AppendToStringVariable",
+                        "inputs": {
+                            "name": "MessagesHtml",
+                            "value": "<li>All property values successfully validated</li>"
+                        }
+                    },
+                    "HTTP": {
+                        "type": "Http",
+                        "inputs": {
+                            "uri": "https://ezhousingfa-e9c3gbbgbde2awgs.eastus2-01.azurewebsites.net/api/UpdatePropertyStatus?code=v1D86FWrrGIUTNHV-suBQh6yDM7v7JRii7tjhuELLseMAzFutgQt0g==",
+                            "method": "POST",
+                            "body": {
+                                "propertyId": "@body('Parse_Blob_into_JSON_')?['propertyId']",
+                                "isActive": true
+                            }
+                        },
+                        "runAfter": {
+                            "Successful_Validation": [
+                                "Succeeded"
+                            ]
+                        },
+                        "runtimeConfiguration": {
+                            "contentTransfer": {
+                                "transferMode": "Chunked"
+                            }
+                        }
+                    }
+                },
+                "else": {
+                    "actions": {}
+                },
+                "runAfter": {
+                    "Check_Rent_or_Sell_Property": [
+                        "Succeeded"
+                    ]
+                }
+            },
+            "Build_Email_Html": {
+                "type": "SetVariable",
+                "inputs": {
+                    "name": "EmailMessage",
+                    "value": "<html><body style='font-family:Arial,sans-serif'><h2>Property: @{body('Parse_Blob_into_JSON_')?['propertyName']}</h2><p><strong>Status:</strong> @{if(variables('IsDataValidated'),'Validated','Failed')}</p><ul>@{variables('MessagesHtml')}</ul><p><strong>Price:</strong> @{body('Parse_Blob_into_JSON_')?['priceRange']} | <strong>Deposit:</strong> @{body('Parse_Blob_into_JSON_')?['initialDeposit']}</p></body></html>"
+                },
+                "runAfter": {
+                    "Validation_successful_or_unsuccessful": [
+                        "Succeeded"
+                    ]
+                }
+            },
+            "Send_email": {
+                "type": "ApiConnection",
+                "inputs": {
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['acsemail']['connectionId']"
+                        }
+                    },
+                    "method": "post",
+                    "body": {
+                        "senderAddress": "DoNotReply@df17e4a3-3381-41d7-a7f4-0ebf2727c3ce.azurecomm.net",
+                        "recipients": {
+                            "to": [
+                                {
+                                    "address": "@{variables('sellerEmailId')}"
+                                }
+                            ]
+                        },
+                        "content": {
+                            "subject": "Status of property on ezhousing app",
+                            "html": "@{variables('EmailMessage')}"
+                        },
+                        "importance": "Normal"
+                    },
+                    "path": "/emails:sendGAVersion",
+                    "queries": {
+                        "api-version": "2023-03-31"
+                    }
+                },
+                "runAfter": {
+                    "Initialize_variables": [
+                        "Succeeded"
+                    ]
+                }
+            },
+            "Compose": {
+                "type": "Compose",
+                "inputs": "@body('Parse_Blob_into_JSON_')?['sellerEmailId']",
+                "runAfter": {
+                    "Build_Email_Html": [
+                        "Succeeded"
+                    ]
+                }
+            },
+            "Initialize_variables": {
+                "type": "InitializeVariable",
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "sellerEmailId",
+                            "type": "string",
+                            "value": "@{body('Parse_Blob_into_JSON_')?['sellerEmailId']}"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Compose": [
+                        "Succeeded"
+                    ]
+                }
+            }
+        },
+        "outputs": {},
+        "parameters": {
+            "$connections": {
+                "type": "Object",
+                "defaultValue": {}
+            }
+        }
+    },
+    "parameters": {
+        "$connections": {
+            "type": "Object",
+            "value": {
+                "azureblob": {
+                    "id": "/subscriptions/37baf65b-ced3-47ed-9d59-045b62e52911/providers/Microsoft.Web/locations/eastus2/managedApis/azureblob",
+                    "connectionId": "/subscriptions/37baf65b-ced3-47ed-9d59-045b62e52911/resourceGroups/Budget-RG/providers/Microsoft.Web/connections/azureblob",
+                    "connectionName": "azureblob"
+                },
+                "acsemail": {
+                    "id": "/subscriptions/37baf65b-ced3-47ed-9d59-045b62e52911/providers/Microsoft.Web/locations/eastus2/managedApis/acsemail",
+                    "connectionId": "/subscriptions/37baf65b-ced3-47ed-9d59-045b62e52911/resourceGroups/Budget-RG/providers/Microsoft.Web/connections/acsemail",
+                    "connectionName": "acsemail"
+                }
+            }
+        }
+    }
+}

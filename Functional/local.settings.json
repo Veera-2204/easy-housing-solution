@@ -1,0 +1,9 @@
+{
+    "IsEncrypted": false,
+    "Values": {
+        "SqlConnectionString": "Server=tcp:sprintehs.database.windows.net,1433;Initial Catalog=EHS_Db;Persist Security Info=False;User ID=admin123;Password=Admin@123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;",
+        "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+        "FUNCTIONS_INPROC_NET8_ENABLED": "1",
+        "FUNCTIONS_WORKER_RUNTIME": "dotnet"
+    }
+}
